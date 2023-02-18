@@ -1,10 +1,19 @@
+getgenv().BountyControl = {
+    host = 3609673269,
+    fps = 15,
+    alts = { -- include host
+        1234567890,
+        1234567890,
+    }
+}
+
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
 repeat wait(0.001) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
 
-local testMode = false
+local testMode = true
 if testMode then
     local newIDS = {}
     for i,v in pairs(game:service"Players":GetChildren()) do
@@ -263,7 +272,7 @@ if isHost then
     nameIn.Position = UDim2.new(0, 0, 0.5, 0)
     nameIn.Size = UDim2.new(0, 184, 0, 16)
     nameIn.Font = Enum.Font.SourceSans
-    nameIn.Text = "  text"
+    nameIn.Text = ""
     nameIn.TextColor3 = Color3.fromRGB(255, 255, 255)
     nameIn.TextSize = 14.000
     nameIn.TextXAlignment = Enum.TextXAlignment.Left
@@ -622,7 +631,7 @@ if isHost then
                 end)
             end)
         else
-            nameIn.Text = "  text"
+            nameIn.Text = ""
         end
     end)
 
