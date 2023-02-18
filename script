@@ -1,19 +1,10 @@
-getgenv().BountyControl = {
-    host = 3609673269,
-    fps = 15,
-    alts = { -- include host
-        1234567890,
-        1234567890,
-    }
-}
-
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
 repeat wait(0.001) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
 
-local testMode = true
+local testMode = false
 if testMode then
     local newIDS = {}
     for i,v in pairs(game:service"Players":GetChildren()) do
@@ -548,6 +539,16 @@ if isHost then
         return c
     end
 
+    local function removeAllSelects()
+        for i,v in pairs(AltsPanel:GetChildren()) do
+            if v:IsA("Frame") then
+                if v:FindFirstChildWhichIsA("TextButton").BackgroundColor3 == green then
+                    v:FindFirstChildWhichIsA("TextButton").BackgroundColor3 = red
+                end
+            end
+        end
+    end
+
     local newBuyerName = ""
 
     bountyKill.MouseButton1Click:Connect(function()
@@ -641,9 +642,11 @@ if isHost then
             alert("crash mode enabled")
             crashMode.Text = "  crash mode | on"
             crashStart.Visible = true
+            removeAllSelects()
         else
             crashStart.Visible = false
             crashMode.Text = "  crash mode | off"
+            removeAllSelects()
             alert("crash mode disabled")
 
             for i,v in pairs(AltsPanel:GetChildren()) do
@@ -812,6 +815,16 @@ if isHost then
 
             altPlayer.leaderstats.Wanted.Changed:Connect(function()
                 outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.minifyNum(altPlayer.leaderstats.Wanted.Value)).." W: "..tostring(functions.minifyNum(math.floor(altPlayer.leaderstats.Wanted.Value / 2)))
+
+                if altPlayer.leaderstats.Wanted.Value <= 0 then
+                    for i,v in pairs(AltsPanel:GetChildren()) do
+                        if v:IsA("Frame") then
+                            if v.Name:lower():find(tostring(altPlayer.UserId)) then
+                                v:FindFirstChildWhichIsA("TextButton").BackgroundColor3 = red
+                            end
+                        end
+                    end
+                end
             end)
             
             selectButton.MouseButton1Click:Connect(function()
