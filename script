@@ -669,10 +669,10 @@ if isHost then
             
                     local altPlayer = game:service"Players":GetPlayerByUserId(v)
                     local bountyOld = altPlayer.leaderstats.Wanted.Value
-                    outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.formatNum(bountyOld))
+                    outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.minifyNum(altPlayer.leaderstats.Wanted.Value)).." W: "..tostring(functions.minifyNum(math.floor(altPlayer.leaderstats.Wanted.Value / 2)))
 
                     altPlayer.leaderstats.Wanted.Changed:Connect(function()
-                        outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.formatNum(altPlayer.leaderstats.Wanted.Value))
+                        outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.minifyNum(altPlayer.leaderstats.Wanted.Value)).." W: "..tostring(functions.minifyNum(math.floor(altPlayer.leaderstats.Wanted.Value / 2)))
                     end)
                     
                     selectButton.MouseButton1Click:Connect(function()
