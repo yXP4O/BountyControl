@@ -98,7 +98,7 @@ functions.tpHome = function() -- teleports to a safe place
         Part.Name = homeName
         Part.Size = Vector3.new(120,1,120)
         Part.Transparency = 1
-        Part.CFrame = CFrame.new(math.random(-2000,2000), math.random(500,2000), math.random(-2000,2000))
+        Part.CFrame = CFrame.new(math.random(-5000,5000), math.random(1000,4000), math.random(-5000,5000))
         Part.Anchored = true
     end
 
