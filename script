@@ -1,0 +1,656 @@
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+repeat wait(0.001) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
+
+local testMode = false
+if testMode then
+    local newIDS = {}
+    for i,v in pairs(game:service"Players":GetChildren()) do
+        table.insert(newIDS, v.UserId)
+    end
+    getgenv().BountyControl.alts = newIDS
+end
+
+local remotes = {
+    "CHECKER_1",
+    "CHECKER_2",
+    "TeleportDetect",
+    "OneMoreTime",
+    "BreathingHAMON",
+    "VirusCough",
+}
+
+local __namecall
+__namecall = hookmetamethod(game, "__namecall", function(...)
+    local args = {...}
+    local method = getnamecallmethod()
+    if (method == "FireServer" and args[1].Name == "MainEvent" and table.find(remotes, args[2])) then
+        return
+    end
+    return __namecall(table.unpack(args))
+end)
+
+local functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/yXP4O/BountyControl/main/module.lua"))()
+
+local player = game:service"Players".LocalPlayer
+local Players = game:service"Players"
+local isHost = player.UserId == BountyControl["host"]
+local MainEvent = game:service"ReplicatedStorage".MainEvent
+local red = Color3.fromRGB(255,0,0)
+local green = Color3.fromRGB(0,255,0)
+local whitelistedBuyer = ""
+local stopProcess = false
+local crashModeEnabled = false
+
+game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFiltering.OnClientEvent:Connect(function(data) 
+    local user = data.FromSpeaker
+    local msg = data.Message
+
+    if game:service"Players":FindFirstChild(user).UserId == BountyControl["host"] then
+        if msg:lower() == ".dw" then
+            whitelistedBuyer = ""
+        elseif msg:lower() == ".stop" then
+            stopProcess = true
+            functions.tpHome()
+        end
+
+        msg = msg:split(" ")
+        if msg[1]:lower() == ".w" then
+            whitelistedBuyer = msg[2]
+        elseif msg[1]:lower() == ".ca" then
+            local myId = functions.fetchMyId(getgenv().BountyControl["alts"], player.UserId)
+            local newBreak = functions.splitString(msg[2])
+            if table.find(newBreak, myId) then
+                if player.UserId == getgenv().BountyControl["host"] then
+                    functions.crashHelper(true, getgenv().BountyControl["host"])
+                else
+                    functions.crashHelper(false, getgenv().BountyControl["host"])
+                end
+            end
+        elseif msg[1]:lower() == ".t" then
+            local myId = functions.fetchMyId(getgenv().BountyControl["alts"], player.UserId)
+            local newBreak = functions.splitString(msg[2])
+            if table.find(newBreak, myId) then
+                local buyerChar = game:service"Players":FindFirstChild(msg[3])
+                if buyerChar.Character then
+                    player.Character.HumanoidRootPart.CFrame = buyerChar.Character.HumanoidRootPart.CFrame * CFrame.new(0,2,0)
+                    functions.say("ko & arrest me.")
+                end
+            end
+        end
+    end 
+end)
+
+player.CharacterAdded:Connect(function()
+    repeat wait(0.01) until player.Character and player.Character:FindFirstChildWhichIsA("Humanoid").Health >= 80
+    functions.tpHome()
+end)
+
+task.spawn(function()
+    functions.tpHome()
+    functions.blockScreen()
+    functions.lowGFX(BountyControl['fps'])
+
+    while true do wait(0.01)
+        pcall(function()
+            for i,v in pairs(game:service"Players":GetChildren()) do
+                if not table.find(BountyControl['alts'], v.UserId) and v.Name ~= whitelistedBuyer then
+                    if v.Character then
+                        if (v.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude <= 20 then
+                            functions.kick(v.Name)
+                        end
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+if isHost then
+    local BountyControl = Instance.new("ScreenGui")
+    local MainFrame = Instance.new("Frame")
+    local Header = Instance.new("Frame")
+    local Title = Instance.new("TextLabel")
+    local AltsPanel = Instance.new("ScrollingFrame")
+    local UIListLayout = Instance.new("UIListLayout")
+    local MainPanel = Instance.new("Frame")
+    local UIListLayout_2 = Instance.new("UIListLayout")
+    local playerCard = Instance.new("Frame")
+    local propertyIndentifier = Instance.new("TextLabel")
+    local nameIn = Instance.new("TextBox")
+    local UICorner_2 = Instance.new("UICorner")
+    local bountyCard = Instance.new("Frame")
+    local propertyIndentifier_2 = Instance.new("TextLabel")
+    local bountyOut = Instance.new("TextLabel")
+    local UICorner_3 = Instance.new("UICorner")
+    local cashCard = Instance.new("Frame")
+    local propertyIndentifier_3 = Instance.new("TextLabel")
+    local cashOut = Instance.new("TextLabel")
+    local UICorner_4 = Instance.new("UICorner")
+    local cancollectCard = Instance.new("Frame")
+    local propertyIndentifier_4 = Instance.new("TextLabel")
+    local canCollectOut = Instance.new("TextLabel")
+    local UICorner_5 = Instance.new("UICorner")
+    local functionsCard = Instance.new("Frame")
+    local UIListLayout_3 = Instance.new("UIListLayout")
+    local propertyIndentifier_5 = Instance.new("TextLabel")
+    local teleportButton = Instance.new("TextButton")
+    local cancelTpButton = Instance.new("TextButton")
+    local UICorner_6 = Instance.new("UICorner")
+    local kickButton = Instance.new("TextButton")
+    local UICorner_7 = Instance.new("UICorner")
+    local crashMode = Instance.new("TextButton")
+    local crashStart = Instance.new("TextButton")
+    local UICorner_8 = Instance.new("UICorner")
+    local alertLabel = Instance.new("TextLabel")
+
+    BountyControl.Name = "BountyControl"
+    BountyControl.Parent = game:service"CoreGui"
+    BountyControl.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+    MainFrame.Name = "MainFrame"
+    MainFrame.Parent = BountyControl
+    MainFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    MainFrame.BorderColor3 = Color3.fromRGB(45, 45, 45)
+    MainFrame.Position = UDim2.new(0.365361094, 0, 0.242331281, 0)
+    MainFrame.Size = UDim2.new(0, 483, 0, 401)
+    MainFrame.Active = true
+    MainFrame.Draggable = true
+
+    Header.Name = "Header"
+    Header.Parent = MainFrame
+    Header.BackgroundColor3 = Color3.fromRGB(0, 0, 13)
+    Header.BorderColor3 = Color3.fromRGB(0, 0, 13)
+    Header.Size = UDim2.new(0, 483, 0, 15)
+
+    Title.Name = "Title"
+    Title.Parent = Header
+    Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Title.BackgroundTransparency = 1.000
+    Title.Size = UDim2.new(0, 201, 0, 15)
+    Title.Font = Enum.Font.SourceSans
+    Title.Text = " running build 1.0"
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.TextSize = 16.000
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+
+    AltsPanel.Name = "AltsPanel"
+    AltsPanel.Parent = MainFrame
+    AltsPanel.Active = true
+    AltsPanel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    AltsPanel.BackgroundTransparency = 1.000
+    AltsPanel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    AltsPanel.Position = UDim2.new(0.0124223605, 0, 0.0897755623, 0)
+    AltsPanel.Size = UDim2.new(0, 233, 0, 359)
+    AltsPanel.ScrollBarThickness = 0
+
+    UIListLayout.Parent = AltsPanel
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout.Padding = UDim.new(0, 3)
+
+    AltsPanel.ChildAdded:Connect(function(a)
+        repeat wait(0.001) until a.Parent ~= nil
+        local cur_size = UIListLayout.AbsoluteContentSize
+        AltsPanel.CanvasSize = UDim2.new(0,cur_size.X,0,cur_size.Y)
+    end)
+
+    AltsPanel.ChildRemoved:Connect(function(a)
+        local cur_size = UIListLayout.AbsoluteContentSize
+        AltsPanel.CanvasSize = UDim2.new(0,cur_size.X,0,cur_size.Y)
+    end)
+
+
+    MainPanel.Name = "MainPanel"
+    MainPanel.Parent = MainFrame
+    MainPanel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    MainPanel.BackgroundTransparency = 1.000
+    MainPanel.Position = UDim2.new(0.504000008, 0, 0.0900000036, 0)
+    MainPanel.Size = UDim2.new(0, 233, 0, 359)
+
+    UIListLayout_2.Parent = MainPanel
+    UIListLayout_2.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    UIListLayout_2.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout_2.Padding = UDim.new(0, 3)
+
+    playerCard.Name = "playerCard"
+    playerCard.Parent = MainPanel
+    playerCard.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    playerCard.BackgroundTransparency = 1.000
+    playerCard.Size = UDim2.new(0, 233, 0, 32)
+
+    propertyIndentifier.Name = "propertyIndentifier"
+    propertyIndentifier.Parent = playerCard
+    propertyIndentifier.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    propertyIndentifier.BackgroundTransparency = 1.000
+    propertyIndentifier.Size = UDim2.new(0, 184, 0, 16)
+    propertyIndentifier.Font = Enum.Font.SourceSans
+    propertyIndentifier.Text = "Player Name:"
+    propertyIndentifier.TextColor3 = Color3.fromRGB(255, 255, 255)
+    propertyIndentifier.TextSize = 14.000
+    propertyIndentifier.TextXAlignment = Enum.TextXAlignment.Left
+
+    nameIn.Name = "nameIn"
+    nameIn.Parent = playerCard
+    nameIn.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+    nameIn.BorderColor3 = Color3.fromRGB(26, 26, 26)
+    nameIn.Position = UDim2.new(0, 0, 0.5, 0)
+    nameIn.Size = UDim2.new(0, 184, 0, 16)
+    nameIn.Font = Enum.Font.SourceSans
+    nameIn.Text = "  text"
+    nameIn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    nameIn.TextSize = 14.000
+    nameIn.TextXAlignment = Enum.TextXAlignment.Left
+
+    UICorner_2.CornerRadius = UDim.new(0, 3)
+    UICorner_2.Parent = nameIn
+
+    bountyCard.Name = "bountyCard"
+    bountyCard.Parent = MainPanel
+    bountyCard.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    bountyCard.BackgroundTransparency = 1.000
+    bountyCard.Size = UDim2.new(0, 233, 0, 32)
+
+    propertyIndentifier_2.Name = "propertyIndentifier"
+    propertyIndentifier_2.Parent = bountyCard
+    propertyIndentifier_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    propertyIndentifier_2.BackgroundTransparency = 1.000
+    propertyIndentifier_2.Size = UDim2.new(0, 184, 0, 16)
+    propertyIndentifier_2.Font = Enum.Font.SourceSans
+    propertyIndentifier_2.Text = "Bounty:"
+    propertyIndentifier_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+    propertyIndentifier_2.TextSize = 14.000
+    propertyIndentifier_2.TextXAlignment = Enum.TextXAlignment.Left
+
+    bountyOut.Name = "bountyOut"
+    bountyOut.Parent = bountyCard
+    bountyOut.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+    bountyOut.BorderColor3 = Color3.fromRGB(26, 26, 26)
+    bountyOut.Position = UDim2.new(0, 0, 0.5, 0)
+    bountyOut.Size = UDim2.new(0, 184, 0, 16)
+    bountyOut.Font = Enum.Font.SourceSans
+    bountyOut.Text = "  0"
+    bountyOut.TextColor3 = Color3.fromRGB(255, 255, 255)
+    bountyOut.TextSize = 14.000
+    bountyOut.TextXAlignment = Enum.TextXAlignment.Left
+
+    UICorner_3.CornerRadius = UDim.new(0, 3)
+    UICorner_3.Parent = bountyOut
+
+    cashCard.Name = "cashCard"
+    cashCard.Parent = MainPanel
+    cashCard.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    cashCard.BackgroundTransparency = 1.000
+    cashCard.Size = UDim2.new(0, 233, 0, 32)
+
+    propertyIndentifier_3.Name = "propertyIndentifier"
+    propertyIndentifier_3.Parent = cashCard
+    propertyIndentifier_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    propertyIndentifier_3.BackgroundTransparency = 1.000
+    propertyIndentifier_3.Size = UDim2.new(0, 184, 0, 16)
+    propertyIndentifier_3.Font = Enum.Font.SourceSans
+    propertyIndentifier_3.Text = "Cash:"
+    propertyIndentifier_3.TextColor3 = Color3.fromRGB(255, 255, 255)
+    propertyIndentifier_3.TextSize = 14.000
+    propertyIndentifier_3.TextXAlignment = Enum.TextXAlignment.Left
+
+    cashOut.Name = "cashOut"
+    cashOut.Parent = cashCard
+    cashOut.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+    cashOut.BorderColor3 = Color3.fromRGB(26, 26, 26)
+    cashOut.Position = UDim2.new(0, 0, 0.5, 0)
+    cashOut.Size = UDim2.new(0, 184, 0, 16)
+    cashOut.Font = Enum.Font.SourceSans
+    cashOut.Text = "  $0"
+    cashOut.TextColor3 = Color3.fromRGB(255, 255, 255)
+    cashOut.TextSize = 14.000
+    cashOut.TextXAlignment = Enum.TextXAlignment.Left
+
+    UICorner_4.CornerRadius = UDim.new(0, 3)
+    UICorner_4.Parent = cashOut
+
+    cancollectCard.Name = "cancollectCard"
+    cancollectCard.Parent = MainPanel
+    cancollectCard.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    cancollectCard.BackgroundTransparency = 1.000
+    cancollectCard.Size = UDim2.new(0, 233, 0, 32)
+
+    propertyIndentifier_4.Name = "propertyIndentifier"
+    propertyIndentifier_4.Parent = cancollectCard
+    propertyIndentifier_4.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    propertyIndentifier_4.BackgroundTransparency = 1.000
+    propertyIndentifier_4.Size = UDim2.new(0, 184, 0, 16)
+    propertyIndentifier_4.Font = Enum.Font.SourceSans
+    propertyIndentifier_4.Text = "CanCollect:"
+    propertyIndentifier_4.TextColor3 = Color3.fromRGB(255, 255, 255)
+    propertyIndentifier_4.TextSize = 14.000
+    propertyIndentifier_4.TextXAlignment = Enum.TextXAlignment.Left
+
+    canCollectOut.Name = "canCollectOut"
+    canCollectOut.Parent = cancollectCard
+    canCollectOut.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+    canCollectOut.BorderColor3 = Color3.fromRGB(26, 26, 26)
+    canCollectOut.Position = UDim2.new(0, 0, 0.5, 0)
+    canCollectOut.Size = UDim2.new(0, 184, 0, 16)
+    canCollectOut.Font = Enum.Font.SourceSans
+    canCollectOut.Text = "  no"
+    canCollectOut.TextColor3 = Color3.fromRGB(255, 255, 255)
+    canCollectOut.TextSize = 14.000
+    canCollectOut.TextXAlignment = Enum.TextXAlignment.Left
+
+    UICorner_5.CornerRadius = UDim.new(0, 3)
+    UICorner_5.Parent = canCollectOut
+
+    functionsCard.Name = "functionsCard"
+    functionsCard.Parent = MainPanel
+    functionsCard.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    functionsCard.BackgroundTransparency = 1.000
+    functionsCard.Position = UDim2.new(0, 0, 0.38997215, 0)
+    functionsCard.Size = UDim2.new(0, 233, 0, 57)
+
+    UIListLayout_3.Parent = functionsCard
+    UIListLayout_3.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout_3.Padding = UDim.new(0, 3)
+
+    propertyIndentifier_5.Name = "propertyIndentifier"
+    propertyIndentifier_5.Parent = functionsCard
+    propertyIndentifier_5.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    propertyIndentifier_5.BackgroundTransparency = 1.000
+    propertyIndentifier_5.Size = UDim2.new(0, 184, 0, 16)
+    propertyIndentifier_5.Font = Enum.Font.SourceSans
+    propertyIndentifier_5.Text = "Functions:"
+    propertyIndentifier_5.TextColor3 = Color3.fromRGB(255, 255, 255)
+    propertyIndentifier_5.TextSize = 14.000
+    propertyIndentifier_5.TextXAlignment = Enum.TextXAlignment.Left
+
+    teleportButton.Name = "teleportButton"
+    teleportButton.Parent = functionsCard
+    teleportButton.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+    teleportButton.BorderColor3 = Color3.fromRGB(26, 26, 26)
+    teleportButton.Size = UDim2.new(0, 184, 0, 16)
+    teleportButton.Font = Enum.Font.SourceSans
+    teleportButton.Text = "  teleport"
+    teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    teleportButton.TextSize = 14.000
+    teleportButton.TextXAlignment = Enum.TextXAlignment.Left
+
+    UICorner_6.CornerRadius = UDim.new(0, 3)
+    UICorner_6.Parent = teleportButton
+
+    cancelTpButton.Name = "cancelTpButton"
+    cancelTpButton.Parent = functionsCard
+    cancelTpButton.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+    cancelTpButton.BorderColor3 = Color3.fromRGB(26, 26, 26)
+    cancelTpButton.Size = UDim2.new(0, 184, 0, 16)
+    cancelTpButton.Font = Enum.Font.SourceSans
+    cancelTpButton.Text = "  cancel teleport / re-home"
+    cancelTpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    cancelTpButton.TextSize = 14.000
+    cancelTpButton.TextXAlignment = Enum.TextXAlignment.Left
+
+    UICorner_6:Clone().Parent = cancelTpButton
+
+    kickButton.Name = "kickButton"
+    kickButton.Parent = functionsCard
+    kickButton.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+    kickButton.BorderColor3 = Color3.fromRGB(26, 26, 26)
+    kickButton.Size = UDim2.new(0, 184, 0, 16)
+    kickButton.Font = Enum.Font.SourceSans
+    kickButton.Text = "  kick"
+    kickButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    kickButton.TextSize = 14.000
+    kickButton.TextXAlignment = Enum.TextXAlignment.Left
+
+    UICorner_7.CornerRadius = UDim.new(0, 3)
+    UICorner_7.Parent = kickButton
+
+    crashMode.Name = "crashMode"
+    crashMode.Parent = functionsCard
+    crashMode.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+    crashMode.BorderColor3 = Color3.fromRGB(26, 26, 26)
+    crashMode.Size = UDim2.new(0, 184, 0, 16)
+    crashMode.Font = Enum.Font.SourceSans
+    crashMode.Text = "  crash mode | off"
+    crashMode.TextColor3 = Color3.fromRGB(255, 255, 255)
+    crashMode.TextSize = 14.000
+    crashMode.TextXAlignment = Enum.TextXAlignment.Left
+
+    UICorner_8.CornerRadius = UDim.new(0, 3)
+    UICorner_8.Parent = crashMode
+
+    crashStart.Name = "crashStart"
+    crashStart.Parent = functionsCard
+    crashStart.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+    crashStart.BorderColor3 = Color3.fromRGB(26, 26, 26)
+    crashStart.Size = UDim2.new(0, 184, 0, 16)
+    crashStart.Font = Enum.Font.SourceSans
+    crashStart.Text = "  start crash"
+    crashStart.TextColor3 = Color3.fromRGB(255, 255, 255)
+    crashStart.TextSize = 14.000
+    crashStart.TextXAlignment = Enum.TextXAlignment.Left
+    crashStart.Visible = false
+
+    UICorner_8:Clone().Parent = crashStart
+
+    alertLabel.Name = "alertLabel"
+    alertLabel.Parent = MainFrame
+    alertLabel.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+    alertLabel.BorderColor3 = Color3.fromRGB(26, 26, 26)
+    alertLabel.Position = UDim2.new(0.0124223605, 0, 0.0473815463, 0)
+    alertLabel.Size = UDim2.new(0, 471, 0, 15)
+    alertLabel.Font = Enum.Font.SourceSans
+    alertLabel.Text = "  System: No new message."
+    alertLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    alertLabel.TextSize = 14.000
+    alertLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    local function alert(msg)
+        alertLabel.Text = "  System: "..tostring(msg)
+    end
+
+    cancelTpButton.MouseButton1Click:Connect(function()
+        functions.say(".stop")
+    end)
+
+    local newBuyerName = ""
+    teleportButton.MouseButton1Click:Connect(function()
+        if crashModeEnabled == true then
+            alert("cannot use this feature, crash mode enabled.")    
+        end
+        local function getAllSelectedChildren()
+            local c = {}
+
+            for i,v in pairs(AltsPanel:GetChildren()) do
+                if v:IsA("Frame") then
+                    if v:FindFirstChildWhichIsA("TextButton").BackgroundColor3 == green then
+                        table.insert(c, v.Name:split("_")[2])
+                    end
+                end
+            end
+            return c
+        end
+
+        local newAssignment = ""
+        for i,v in pairs(getAllSelectedChildren()) do
+            newAssignment = newAssignment..""..tostring(functions.fetchMyId(getgenv().BountyControl["alts"],v))
+        end
+
+        functions.say(".t "..tostring(newAssignment).." "..tostring(newBuyerName))
+    end)
+
+    crashMode.MouseButton1Click:Connect(function()
+        crashModeEnabled = not crashModeEnabled
+        if crashModeEnabled then
+            alert("crash mode enabled")
+            crashStart.Visible = true
+        else
+            crashStart.Visible = false
+            alert("crash mdoe disabled")
+
+            for i,v in pairs(AltsPanel:GetChildren()) do
+                if v:FindFirstChildWhichIsA("TextButton").BackgroundColor3 == green then
+                    v:FindFirstChildWhichIsA("TextButton").BackgroundColor3 = red
+                end
+            end
+        end
+    end)
+
+    crashStart.MouseButton1Click:Connect(function()
+        local function getAllSelectedChildren()
+            local c = {}
+
+            for i,v in pairs(AltsPanel:GetChildren()) do
+                if v:IsA("Frame") then
+                    if v:FindFirstChildWhichIsA("TextButton").BackgroundColor3 == green then
+                        table.insert(c, v.Name:split("_")[2])
+                    end
+                end
+            end
+            table.insert(c, player.UserId)
+            return c
+        end
+
+        local newAssignment = ""
+        for i,v in pairs(getAllSelectedChildren()) do
+            newAssignment = newAssignment..""..tostring(functions.fetchMyId(getgenv().BountyControl["alts"],v))
+        end
+
+        functions.say(".ca "..tostring(newAssignment))
+    end)
+
+    nameIn.FocusLost:Connect(function()
+        local out = functions.getPlayer(nameIn.Text)
+        nameIn.Text = "  "..tostring(nameIn.Text)
+        if out then
+            newBuyerName = out.Name
+
+            if not workspace.Players:FindFirstChild(out.Name) then
+                repeat wait(0.01) until workspace.Players:FindFirstChild(out.Name)
+            end
+
+            pcall(function()
+                local cash = out.DataFolder.Currency
+                local wanted = out.leaderstats.Wanted
+
+                if wanted.Value <= 0 then
+                    canCollectOut.Text = "  true"
+                else
+                    canCollectOut.Text = "  false"
+                end
+
+                cashOut.Text = "  $"..tostring(functions.formatNum(cash.Value))
+                bountyOut.Text = "  "..tostring(functions.formatNum(wanted.Value))
+
+                cash.Changed:Connect(function()
+                    cashOut.Text = "  $"..tostring(functions.formatNum(cash.Value))
+                end)
+                wanted.Changed:Connect(function()
+                    bountyOut.Text = "  "..tostring(functions.formatNum(wanted.Value))
+                end)
+            end)
+        else
+            nameIn.Text = "  text"
+        end
+    end)
+
+    local cacheSelection = {}
+    local function refreshAltList()
+        local function updateCacheList()
+            cacheSelection = {}
+
+            for i,v in pairs(AltsPanel:GetChildren()) do
+                if v:IsA("Frame") then
+                    local ind = v:FindFirstChildWhichIsA("TextButton")
+                    if ind then
+                        if ind.BackgroundColor3 == green then
+                            table.insert(cacheSelection, v.Name:split("_")[2])
+                        end
+                    end
+                end
+            end
+        end
+
+        for i,v in pairs(AltsPanel:GetChildren()) do
+            if v:IsA("Frame") then
+                v:Destroy()
+            end
+        end
+
+        for i,v in pairs(getgenv().BountyControl["alts"]) do
+            if functions.checkPlayer(v) then
+                if not workspace.Players:FindFirstChild(game:service"Players":GetPlayerByUserId(v).Name) then
+                    repeat wait(0.01) until workspace.Players:FindFirstChild(game:service"Players":GetPlayerByUserId(v).Name)
+                end
+        
+                local AltCardHolder = Instance.new("Frame")
+                local selectButton = Instance.new("TextButton")
+                local UICorner = Instance.new("UICorner")
+                local outLabel = Instance.new("TextLabel")
+        
+                AltCardHolder.Name = "AltCardHolder_"..tostring(v)
+                AltCardHolder.Parent = AltsPanel
+                AltCardHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                AltCardHolder.BackgroundTransparency = 1.000
+                AltCardHolder.Size = UDim2.new(0, 233, 0, 17)
+                
+                selectButton.Name = "selectButton"
+                selectButton.Parent = AltCardHolder
+                selectButton.BackgroundColor3 = red
+                selectButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+                selectButton.Size = UDim2.new(0, 17, 0, 17)
+                selectButton.Font = Enum.Font.SourceSans
+                selectButton.Text = ""
+                selectButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+                selectButton.TextSize = 1.000
+                
+                UICorner.CornerRadius = UDim.new(0, 3)
+                UICorner.Parent = selectButton
+                
+                outLabel.Name = "outLabel"
+                outLabel.Parent = AltCardHolder
+                outLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                outLabel.BackgroundTransparency = 1.000
+                outLabel.Position = UDim2.new(0.0987124443, 0, 0, 0)
+                outLabel.Size = UDim2.new(0, 201, 0, 17)
+                outLabel.Font = Enum.Font.SourceSans
+                outLabel.Text = "AltName - B: 0"
+                outLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                outLabel.TextSize = 16.000
+                outLabel.TextXAlignment = Enum.TextXAlignment.Left
+        
+                local altPlayer = game:service"Players":GetPlayerByUserId(v)
+                local bountyOld = altPlayer.leaderstats.Wanted.Value
+                outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.formatNum(bountyOld))
+
+                altPlayer.leaderstats.Wanted.Changed:Connect(function()
+                    outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.formatNum(altPlayer.leaderstats.Wanted.Value))
+                end)
+                
+                selectButton.MouseButton1Click:Connect(function()
+                    if tonumber(altPlayer.leaderstats.Wanted.Value) > 0 or crashModeEnabled == true then
+                        updateCacheList()
+                        if selectButton.BackgroundColor3 == red then
+                            selectButton.BackgroundColor3 = green
+                        else
+                            selectButton.BackgroundColor3 = red
+                        end
+                    end
+                end)
+            end
+        end
+    end
+
+    refreshAltList()
+    game:service"Players".PlayerAdded:Connect(function(plr)
+        repeat wait(0.01) until workspace.Players:FindFirstChild(plr.Name)
+        refreshAltList()
+    end)
+    game:service"Players".PlayerRemoving:Connect(function(plr)
+        refreshAltList()
+        if plr.Name == whitelistedBuyer then
+            whitelistedBuyer = ""
+            functions.tpHome()
+        end
+    end)
+end
