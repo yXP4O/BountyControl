@@ -8,7 +8,9 @@ local testMode = false
 if testMode then
     local newIDS = {}
     for i,v in pairs(game:service"Players":GetChildren()) do
-        table.insert(newIDS, v.UserId)
+        if math.random(1,3) == 2 then
+            table.insert(newIDS, v.UserId)
+        end
     end
     getgenv().BountyControl.alts = newIDS
 end
@@ -164,7 +166,6 @@ if isHost then
     local crashMode = Instance.new("TextButton")
     local crashStart = Instance.new("TextButton")
     local UICorner_8 = Instance.new("UICorner")
-    local alertLabel = Instance.new("TextLabel")
 
     BountyControl.Name = "BountyControl"
     BountyControl.Parent = game:service"CoreGui"
@@ -453,6 +454,8 @@ if isHost then
 
     UICorner_8:Clone().Parent = crashStart
 
+    local alertLabel = Instance.new("TextLabel")
+
     alertLabel.Name = "alertLabel"
     alertLabel.Parent = MainFrame
     alertLabel.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
@@ -460,16 +463,34 @@ if isHost then
     alertLabel.Position = UDim2.new(0.0124223605, 0, 0.0473815463, 0)
     alertLabel.Size = UDim2.new(0, 471, 0, 15)
     alertLabel.Font = Enum.Font.SourceSans
-    alertLabel.Text = "  System: No new message."
+    alertLabel.Text = "  System: "..tostring(msg)
     alertLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     alertLabel.TextSize = 14.000
     alertLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-    local function alert(msg)
-        task.spawn(function()
-            alertLabel.Text = "  System: "..tostring(msg)
-            task.wait(5)
-            alertLabel.Text = "  System: no further messages."
+    local function alert(msg, duration)
+        for i,v in pairs(MainFrame:GetChildren()) do
+            if v:IsA("TextLabel") and v.Name == "Alert" then
+                v:Destroy()
+            end
+        end
+
+        duration = duration or 5
+        local MalertLabel = Instance.new("TextLabel")
+        MalertLabel.Name = "Alert"
+        MalertLabel.Parent = MainFrame
+        MalertLabel.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+        MalertLabel.BorderColor3 = Color3.fromRGB(26, 26, 26)
+        MalertLabel.Position = UDim2.new(0.0124223605, 0, 0.0473815463, 0)
+        MalertLabel.Size = UDim2.new(0, 471, 0, 15)
+        MalertLabel.Font = Enum.Font.SourceSans
+        MalertLabel.Text = "  System: "..tostring(msg)
+        MalertLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        MalertLabel.TextSize = 14.000
+        MalertLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+        task.delay(duration, function()
+            pcall(function() MalertLabel:Destroy() end)
         end)
     end
 
@@ -602,106 +623,148 @@ if isHost then
     end)
 
     local cacheSelection = {}
-    local function refreshAltList()
-        local function updateCacheList()
-            cacheSelection = {}
 
-            for i,v in pairs(AltsPanel:GetChildren()) do
-                if v:IsA("Frame") then
-                    local ind = v:FindFirstChildWhichIsA("TextButton")
-                    if ind then
-                        if ind.BackgroundColor3 == green then
-                            table.insert(cacheSelection, v.Name:split("_")[2])
+    local function calculateTotalAmount()
+        local total = 0
+
+        for i,v in pairs(AltsPanel:GetChildren()) do
+            if v:IsA("Frame") then
+                if v:FindFirstChildWhichIsA("TextButton").BackgroundColor3 == green then
+                    local id = v.Name:split("_")[2]
+                    local altPlr = game:service"Players":GetPlayerByUserId(id)
+                    if altPlr then
+                        local newBounty = altPlr:FindFirstChild("leaderstats"):FindFirstChild("Wanted").Value
+                        if newBounty then
+                            total = total + tonumber(newBounty)
                         end
                     end
                 end
             end
         end
 
+        return functions.minifyNum(total)
+    end
+
+    local function updateCacheList()
+        cacheSelection = {}
+        local newAmt = 0
+
         for i,v in pairs(AltsPanel:GetChildren()) do
             if v:IsA("Frame") then
-                v:Destroy()
+                local ind = v:FindFirstChildWhichIsA("TextButton")
+                if ind then
+                    if ind.BackgroundColor3 == green then
+                        table.insert(cacheSelection, v.Name:split("_")[2])
+                        newAmt = calculateTotalAmount()
+                    end
+                end
             end
         end
 
-        for i,v in pairs(getgenv().BountyControl["alts"]) do
-            if functions.checkPlayer(v) then
-                if not workspace.Players:FindFirstChild(game:service"Players":GetPlayerByUserId(v).Name) then
-                    repeat wait(0.01) until workspace.Players:FindFirstChild(game:service"Players":GetPlayerByUserId(v).Name)
+        alert("Total: "..tostring(newAmt), 10)
+    end
+
+    local function makeCard(alt)
+        if not AltsPanel:FindFirstChild("AltCardHolder_"..tostring(alt)) then
+            local AltCardHolder = Instance.new("Frame")
+            local selectButton = Instance.new("TextButton")
+            local UICorner = Instance.new("UICorner")
+            local outLabel = Instance.new("TextLabel")
+    
+            AltCardHolder.Name = "AltCardHolder_"..tostring(alt)
+            AltCardHolder.Parent = AltsPanel
+            AltCardHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            AltCardHolder.BackgroundTransparency = 1.000
+            AltCardHolder.Size = UDim2.new(0, 233, 0, 17)
+            
+            selectButton.Name = "selectButton"
+            selectButton.Parent = AltCardHolder
+            selectButton.BackgroundColor3 = red
+            selectButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+            selectButton.Size = UDim2.new(0, 17, 0, 17)
+            selectButton.Font = Enum.Font.SourceSans
+            selectButton.Text = ""
+            selectButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+            selectButton.TextSize = 1.000
+            
+            UICorner.CornerRadius = UDim.new(0, 3)
+            UICorner.Parent = selectButton
+            
+            outLabel.Name = "outLabel"
+            outLabel.Parent = AltCardHolder
+            outLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            outLabel.BackgroundTransparency = 1.000
+            outLabel.Position = UDim2.new(0.0987124443, 0, 0, 0)
+            outLabel.Size = UDim2.new(0, 201, 0, 17)
+            outLabel.Font = Enum.Font.SourceSans
+            outLabel.Text = "AltName - B: 0"
+            outLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            outLabel.TextSize = 16.000
+            outLabel.TextXAlignment = Enum.TextXAlignment.Left
+    
+            local altPlayer = game:service"Players":GetPlayerByUserId(alt)
+            local bountyOld = altPlayer.leaderstats.Wanted.Value
+            outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.minifyNum(altPlayer.leaderstats.Wanted.Value)).." W: "..tostring(functions.minifyNum(math.floor(altPlayer.leaderstats.Wanted.Value / 2)))
+
+            altPlayer.leaderstats.Wanted.Changed:Connect(function()
+                outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.minifyNum(altPlayer.leaderstats.Wanted.Value)).." W: "..tostring(functions.minifyNum(math.floor(altPlayer.leaderstats.Wanted.Value / 2)))
+            end)
+            
+            selectButton.MouseButton1Click:Connect(function()
+                if tonumber(altPlayer.leaderstats.Wanted.Value) > 0 or crashModeEnabled == true then
+                    if selectButton.BackgroundColor3 == red then
+                        selectButton.BackgroundColor3 = green
+                    else
+                        selectButton.BackgroundColor3 = red
+                    end
+
+                    updateCacheList()
+                else
+                    alert("this account has 0 bounty.")
                 end
+            end)
+        end
+    end
 
-                if not AltsPanel:FindFirstChild("AltCardHolder_"..tostring(v)) then
-                    local AltCardHolder = Instance.new("Frame")
-                    local selectButton = Instance.new("TextButton")
-                    local UICorner = Instance.new("UICorner")
-                    local outLabel = Instance.new("TextLabel")
-            
-                    AltCardHolder.Name = "AltCardHolder_"..tostring(v)
-                    AltCardHolder.Parent = AltsPanel
-                    AltCardHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    AltCardHolder.BackgroundTransparency = 1.000
-                    AltCardHolder.Size = UDim2.new(0, 233, 0, 17)
-                    
-                    selectButton.Name = "selectButton"
-                    selectButton.Parent = AltCardHolder
-                    selectButton.BackgroundColor3 = red
-                    selectButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-                    selectButton.Size = UDim2.new(0, 17, 0, 17)
-                    selectButton.Font = Enum.Font.SourceSans
-                    selectButton.Text = ""
-                    selectButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-                    selectButton.TextSize = 1.000
-                    
-                    UICorner.CornerRadius = UDim.new(0, 3)
-                    UICorner.Parent = selectButton
-                    
-                    outLabel.Name = "outLabel"
-                    outLabel.Parent = AltCardHolder
-                    outLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    outLabel.BackgroundTransparency = 1.000
-                    outLabel.Position = UDim2.new(0.0987124443, 0, 0, 0)
-                    outLabel.Size = UDim2.new(0, 201, 0, 17)
-                    outLabel.Font = Enum.Font.SourceSans
-                    outLabel.Text = "AltName - B: 0"
-                    outLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    outLabel.TextSize = 16.000
-                    outLabel.TextXAlignment = Enum.TextXAlignment.Left
-            
-                    local altPlayer = game:service"Players":GetPlayerByUserId(v)
-                    local bountyOld = altPlayer.leaderstats.Wanted.Value
-                    outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.minifyNum(altPlayer.leaderstats.Wanted.Value)).." W: "..tostring(functions.minifyNum(math.floor(altPlayer.leaderstats.Wanted.Value / 2)))
+    for i,v in pairs(game:service"Players":GetChildren()) do
+        if table.find(getgenv().BountyControl["alts"], v.UserId) then
+            task.spawn(function()
+                pcall(function()
+                    if not workspace.Players:FindFirstChild(v.Name) then
+                        repeat wait(0.01) until workspace.Players:FindFirstChild(v.Name)
+                    end
 
-                    altPlayer.leaderstats.Wanted.Changed:Connect(function()
-                        outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.minifyNum(altPlayer.leaderstats.Wanted.Value)).." W: "..tostring(functions.minifyNum(math.floor(altPlayer.leaderstats.Wanted.Value / 2)))
-                    end)
-                    
-                    selectButton.MouseButton1Click:Connect(function()
-                        if tonumber(altPlayer.leaderstats.Wanted.Value) > 0 or crashModeEnabled == true then
-                            updateCacheList()
-                            if selectButton.BackgroundColor3 == red then
-                                selectButton.BackgroundColor3 = green
-                            else
-                                selectButton.BackgroundColor3 = red
-                            end
-                        else
-                            alert("this account has 0 bounty.")
-                        end
-                    end)
+                    makeCard(v.UserId)
+                end)
+            end)
+        end
+    end
+
+    local function cleanUpAlts()
+        for i,v in pairs(AltsPanel:GetChildren()) do
+            if v:IsA("Frame") then
+                if table.find(getgenv().BountyControl["alts"], tostring(v.Name:split("_")[2])) then
+                    local data = functions.checkPlayer(tonumber(v.Name:split("_")[2]))
+                    if not data then
+                        v:Destroy()
+                    end
                 end
             end
         end
     end
 
-    refreshAltList()
     game:service"Players".PlayerAdded:Connect(function(plr)
         repeat wait(0.01) until workspace.Players:FindFirstChild(plr.Name)
-        refreshAltList()
+        if table.find(getgenv().BountyControl["alts"], v.UserId) then
+            makeCard(v.UserId)
+        end
     end)
     game:service"Players".PlayerRemoving:Connect(function(plr)
-        refreshAltList()
         if plr.Name == whitelistedBuyer then
             whitelistedBuyer = ""
             functions.tpHome()
         end
+
+        cleanUpAlts()
     end)
 end
