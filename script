@@ -75,9 +75,11 @@ game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFilteri
             if table.find(newBreak, myId) then
                 local buyerChar = game:service"Players":FindFirstChild(msg[3])
                 if buyerChar.Character then
-                    player.Character.HumanoidRootPart.CFrame = buyerChar.Character.HumanoidRootPart.CFrame * CFrame.new(0,2,0)
-                    functions.say("ko & arrest me.")
+                    player.Character.HumanoidRootPart.CFrame = buyerChar.Character.HumanoidRootPart.CFrame * CFrame.new(math.random(-3,3),0,math.random(-3,3))
+                    functions.say("Knock and arrest me")
                 end
+            else
+                functions.tpHome()
             end
         end
     end 
@@ -446,7 +448,11 @@ if isHost then
     alertLabel.TextXAlignment = Enum.TextXAlignment.Left
 
     local function alert(msg)
-        alertLabel.Text = "  System: "..tostring(msg)
+        task.spawn(function()
+            alertLabel.Text = "  System: "..tostring(msg)
+            task.wait(5)
+            alertLabel.Text = "  System: no further messages."
+        end)
     end
 
     cancelTpButton.MouseButton1Click:Connect(function()
@@ -532,6 +538,7 @@ if isHost then
         nameIn.Text = "  "..tostring(nameIn.Text)
         if out then
             newBuyerName = out.Name
+            nameIn.Text = "  "..tostring(out.Name)
 
             if not workspace.Players:FindFirstChild(out.Name) then
                 repeat wait(0.01) until workspace.Players:FindFirstChild(out.Name)
@@ -540,8 +547,9 @@ if isHost then
             pcall(function()
                 local cash = out.DataFolder.Currency
                 local wanted = out.leaderstats.Wanted
+                local officer = out.DataFolder.Officer
 
-                if wanted.Value <= 0 then
+                if wanted.Value <= 0 and out.DataFolder.Officer.Value == 1 then
                     canCollectOut.Text = "  true"
                 else
                     canCollectOut.Text = "  false"
@@ -555,6 +563,13 @@ if isHost then
                 end)
                 wanted.Changed:Connect(function()
                     bountyOut.Text = "  "..tostring(functions.formatNum(wanted.Value))
+                end)
+                officer.Changed:Connect(function()
+                    if wanted.Value <= 0 and out.DataFolder.Officer.Value == 1 then
+                        canCollectOut.Text = "  true"
+                    else
+                        canCollectOut.Text = "  false"
+                    end
                 end)
             end)
         else
