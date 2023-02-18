@@ -454,6 +454,12 @@ if isHost then
     end)
 
     local newBuyerName = ""
+
+    kickButton.MouseButton1Click:Connect(function()
+        alert("kicked",newBuyerName)
+        functions.kick(newBuyerName)
+    end)
+
     teleportButton.MouseButton1Click:Connect(function()
         if crashModeEnabled == true then
             alert("cannot use this feature, crash mode enabled.")    
@@ -483,10 +489,12 @@ if isHost then
         crashModeEnabled = not crashModeEnabled
         if crashModeEnabled then
             alert("crash mode enabled")
+            crashMode.Text = "  crash mode | on"
             crashStart.Visible = true
         else
             crashStart.Visible = false
-            alert("crash mdoe disabled")
+            crashMode.Text = "  crash mode | off"
+            alert("crash mode disabled")
 
             for i,v in pairs(AltsPanel:GetChildren()) do
                 if v:FindFirstChildWhichIsA("TextButton").BackgroundColor3 == green then
@@ -582,61 +590,65 @@ if isHost then
                 if not workspace.Players:FindFirstChild(game:service"Players":GetPlayerByUserId(v).Name) then
                     repeat wait(0.01) until workspace.Players:FindFirstChild(game:service"Players":GetPlayerByUserId(v).Name)
                 end
-        
-                local AltCardHolder = Instance.new("Frame")
-                local selectButton = Instance.new("TextButton")
-                local UICorner = Instance.new("UICorner")
-                local outLabel = Instance.new("TextLabel")
-        
-                AltCardHolder.Name = "AltCardHolder_"..tostring(v)
-                AltCardHolder.Parent = AltsPanel
-                AltCardHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                AltCardHolder.BackgroundTransparency = 1.000
-                AltCardHolder.Size = UDim2.new(0, 233, 0, 17)
-                
-                selectButton.Name = "selectButton"
-                selectButton.Parent = AltCardHolder
-                selectButton.BackgroundColor3 = red
-                selectButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-                selectButton.Size = UDim2.new(0, 17, 0, 17)
-                selectButton.Font = Enum.Font.SourceSans
-                selectButton.Text = ""
-                selectButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-                selectButton.TextSize = 1.000
-                
-                UICorner.CornerRadius = UDim.new(0, 3)
-                UICorner.Parent = selectButton
-                
-                outLabel.Name = "outLabel"
-                outLabel.Parent = AltCardHolder
-                outLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                outLabel.BackgroundTransparency = 1.000
-                outLabel.Position = UDim2.new(0.0987124443, 0, 0, 0)
-                outLabel.Size = UDim2.new(0, 201, 0, 17)
-                outLabel.Font = Enum.Font.SourceSans
-                outLabel.Text = "AltName - B: 0"
-                outLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                outLabel.TextSize = 16.000
-                outLabel.TextXAlignment = Enum.TextXAlignment.Left
-        
-                local altPlayer = game:service"Players":GetPlayerByUserId(v)
-                local bountyOld = altPlayer.leaderstats.Wanted.Value
-                outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.formatNum(bountyOld))
 
-                altPlayer.leaderstats.Wanted.Changed:Connect(function()
-                    outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.formatNum(altPlayer.leaderstats.Wanted.Value))
-                end)
-                
-                selectButton.MouseButton1Click:Connect(function()
-                    if tonumber(altPlayer.leaderstats.Wanted.Value) > 0 or crashModeEnabled == true then
-                        updateCacheList()
-                        if selectButton.BackgroundColor3 == red then
-                            selectButton.BackgroundColor3 = green
+                if not AltsPanel:FindFirstChild("AltCardHolder_"..tostring(v)) then
+                    local AltCardHolder = Instance.new("Frame")
+                    local selectButton = Instance.new("TextButton")
+                    local UICorner = Instance.new("UICorner")
+                    local outLabel = Instance.new("TextLabel")
+            
+                    AltCardHolder.Name = "AltCardHolder_"..tostring(v)
+                    AltCardHolder.Parent = AltsPanel
+                    AltCardHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    AltCardHolder.BackgroundTransparency = 1.000
+                    AltCardHolder.Size = UDim2.new(0, 233, 0, 17)
+                    
+                    selectButton.Name = "selectButton"
+                    selectButton.Parent = AltCardHolder
+                    selectButton.BackgroundColor3 = red
+                    selectButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+                    selectButton.Size = UDim2.new(0, 17, 0, 17)
+                    selectButton.Font = Enum.Font.SourceSans
+                    selectButton.Text = ""
+                    selectButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+                    selectButton.TextSize = 1.000
+                    
+                    UICorner.CornerRadius = UDim.new(0, 3)
+                    UICorner.Parent = selectButton
+                    
+                    outLabel.Name = "outLabel"
+                    outLabel.Parent = AltCardHolder
+                    outLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    outLabel.BackgroundTransparency = 1.000
+                    outLabel.Position = UDim2.new(0.0987124443, 0, 0, 0)
+                    outLabel.Size = UDim2.new(0, 201, 0, 17)
+                    outLabel.Font = Enum.Font.SourceSans
+                    outLabel.Text = "AltName - B: 0"
+                    outLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    outLabel.TextSize = 16.000
+                    outLabel.TextXAlignment = Enum.TextXAlignment.Left
+            
+                    local altPlayer = game:service"Players":GetPlayerByUserId(v)
+                    local bountyOld = altPlayer.leaderstats.Wanted.Value
+                    outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.formatNum(bountyOld))
+
+                    altPlayer.leaderstats.Wanted.Changed:Connect(function()
+                        outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.formatNum(altPlayer.leaderstats.Wanted.Value))
+                    end)
+                    
+                    selectButton.MouseButton1Click:Connect(function()
+                        if tonumber(altPlayer.leaderstats.Wanted.Value) > 0 or crashModeEnabled == true then
+                            updateCacheList()
+                            if selectButton.BackgroundColor3 == red then
+                                selectButton.BackgroundColor3 = green
+                            else
+                                selectButton.BackgroundColor3 = red
+                            end
                         else
-                            selectButton.BackgroundColor3 = red
+                            alert("this account has 0 bounty.")
                         end
-                    end
-                end)
+                    end)
+                end
             end
         end
     end
