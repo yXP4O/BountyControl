@@ -1,3 +1,12 @@
+getgenv().BountyControl = {
+    host = 1234567890,
+    fps = 15,
+    alts = { -- include host
+        1234567890,
+        1234567890,
+    }
+}
+
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
@@ -41,6 +50,7 @@ local MainEvent = game:service"ReplicatedStorage".MainEvent
 local red = Color3.fromRGB(255,0,0)
 local green = Color3.fromRGB(0,255,0)
 local whitelistedBuyer = ""
+local secureEnable = false
 local stopProcess = false
 local crashModeEnabled = false
 
@@ -54,11 +64,16 @@ game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFilteri
         elseif msg:lower() == ".stop" then
             stopProcess = true
             functions.tpHome()
+
+            task.wait(3)
+
+            secureEnable = true
         end
 
         msg = msg:split(" ")
         if msg[1]:lower() == ".w" then
             whitelistedBuyer = msg[2]
+        elseif msg[1]:lower() 
         elseif msg[1]:lower() == ".ca" then
             local myId = functions.fetchMyId(getgenv().BountyControl["alts"], player.UserId)
             local newBreak = functions.splitString(msg[2])
@@ -70,6 +85,7 @@ game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFilteri
                 end
             end
         elseif msg[1]:lower() == ".t" then
+            secureEnable = false
             local myId = functions.fetchMyId(getgenv().BountyControl["alts"], player.UserId)
             local newBreak = functions.splitString(msg[2])
             if table.find(newBreak, myId) then
@@ -80,6 +96,8 @@ game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFilteri
                 end
             else
                 functions.tpHome()
+                task.wait(3)
+                secureEnable = true
             end
         end
     end 
@@ -96,17 +114,19 @@ task.spawn(function()
     functions.lowGFX(BountyControl['fps'])
 
     while true do wait(0.01)
-        pcall(function()
-            for i,v in pairs(game:service"Players":GetChildren()) do
-                if not table.find(BountyControl['alts'], v.UserId) and v.Name ~= whitelistedBuyer then
-                    if v.Character then
-                        if (v.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude <= 20 then
-                            functions.kick(v.Name)
+        if secureEnable == true then
+            pcall(function()
+                for i,v in pairs(game:service"Players":GetChildren()) do
+                    if not table.find(BountyControl['alts'], v.UserId) and v.Name ~= whitelistedBuyer then
+                        if v.Character then
+                            if (v.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude <= 20 then
+                                functions.kick(v.Name)
+                            end
                         end
                     end
                 end
-            end
-        end)
+            end)
+        end
     end
 end)
 
@@ -455,8 +475,26 @@ if isHost then
         end)
     end
 
+    local function getAllSelectedChildren()
+        local c = {}
+
+        for i,v in pairs(AltsPanel:GetChildren()) do
+            if v:IsA("Frame") then
+                if v:FindFirstChildWhichIsA("TextButton").BackgroundColor3 == green then
+                    table.insert(c, v.Name:split("_")[2])
+                end
+            end
+        end
+        return c
+    end
+
     cancelTpButton.MouseButton1Click:Connect(function()
-        functions.say(".stop")
+        local newAssignment = ""
+        for i,v in pairs(getAllSelectedChildren()) do
+            newAssignment = newAssignment..""..tostring(functions.fetchMyId(getgenv().BountyControl["alts"],v))
+        end
+
+        functions.say(".stop "..tostring(newAssignment))
     end)
 
     local newBuyerName = ""
@@ -469,18 +507,6 @@ if isHost then
     teleportButton.MouseButton1Click:Connect(function()
         if crashModeEnabled == true then
             alert("cannot use this feature, crash mode enabled.")    
-        end
-        local function getAllSelectedChildren()
-            local c = {}
-
-            for i,v in pairs(AltsPanel:GetChildren()) do
-                if v:IsA("Frame") then
-                    if v:FindFirstChildWhichIsA("TextButton").BackgroundColor3 == green then
-                        table.insert(c, v.Name:split("_")[2])
-                    end
-                end
-            end
-            return c
         end
 
         local newAssignment = ""
@@ -511,7 +537,7 @@ if isHost then
     end)
 
     crashStart.MouseButton1Click:Connect(function()
-        local function getAllSelectedChildren()
+        local function getAllSelectedChildrenV2()
             local c = {}
 
             for i,v in pairs(AltsPanel:GetChildren()) do
@@ -526,7 +552,7 @@ if isHost then
         end
 
         local newAssignment = ""
-        for i,v in pairs(getAllSelectedChildren()) do
+        for i,v in pairs(getAllSelectedChildrenV2()) do
             newAssignment = newAssignment..""..tostring(functions.fetchMyId(getgenv().BountyControl["alts"],v))
         end
 
