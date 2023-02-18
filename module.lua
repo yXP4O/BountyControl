@@ -133,4 +133,9 @@ functions.formatNum = function(c) -- formats the number
     return tostring(c):reverse():gsub("%d%d%d", "%1,"):reverse():gsub("^,", ""):gsub(",",".")
 end
 
+functions.kick = function(plr) -- server kick a buyer / hacker anyone.
+    local MainEvent = game:service"ReplicatedStorage".MainEvent
+    MainEvent:FireServer("VIP_CMD","Kick",game:service"Players"[plr])
+end
+
 return functions
