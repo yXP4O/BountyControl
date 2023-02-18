@@ -38,7 +38,7 @@ functions.fetchMyId = function(alt_list, alt_id) -- gets the alt / host indentif
     local c = 0
     for i,v in pairs(alt_list) do
         c = c + 1
-        if v == alt_id then
+        if tostring(v) == tostring(alt_id) then
             return lib[c]
         end 
     end
