@@ -732,6 +732,7 @@ if isHost then
     end
 
     for i=1,#getgenv().BountyControl["alts"] do
+        local v = getgenv().BountyControl["alts"][i]
         local data = functions.checkPlayer(tonumber(v))
         if data then
             local newAlt = game:service"Players":GetPlayerByUserId(tonumber(v))
