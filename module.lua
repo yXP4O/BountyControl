@@ -237,7 +237,7 @@ functions.crashHelper = function(hostOf, hostName)
 end
 
 functions.minifyNum = function(num)
-    num = tonumber(num)
+    num = tostring(num)
     if num:len() == 4 then
         return num:sub(1,1).."."..num:sub(2,2).."K"
     elseif num:len() == 5 then
