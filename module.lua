@@ -96,7 +96,7 @@ functions.tpHome = function() -- teleports to a safe place
     if not workspace:FindFirstChild(homeName) then
         local Part = Instance.new("Part", workspace)
         Part.Name = homeName
-        Part.Size = Vector3.new(20,1,20)
+        Part.Size = Vector3.new(120,1,120)
         Part.Transparency = 1
         Part.CFrame = CFrame.new(math.random(-2000,2000), math.random(500,2000), math.random(-2000,2000))
         Part.Anchored = true
