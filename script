@@ -4,7 +4,7 @@ end
 
 repeat wait(0.001) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
 
-local testMode = true
+local testMode = false
 if testMode then
     local newIDS = {}
     for i,v in pairs(game:service"Players":GetChildren()) do
