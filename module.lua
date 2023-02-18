@@ -142,7 +142,7 @@ end
 
 functions.getPlayer = function(arg)
     for i,v in pairs(game:service"Players":GetChildren()) do
-        if v.Name:lower():find(arg:lower()) then
+        if v.Name:lower():sub(1,arg:len()) == arg:lower():sub(1,arg:len()) then
             return v
         end
     end
