@@ -238,7 +238,9 @@ end
 
 functions.minifyNum = function(num)
     num = tostring(num)
-    if num:len() == 4 then
+    if num:len() <= 3 then
+        return num
+    elseif num:len() == 4 then
         return num:sub(1,1).."."..num:sub(2,2).."K"
     elseif num:len() == 5 then
         return num:sub(1,2).."."..num:sub(3,4).."K"
@@ -254,7 +256,7 @@ functions.minifyNum = function(num)
         return num:sub(1,1).."."..num:sub(2,3).."B"
     end
 
-    return nil
+    return 'error'
 end
 
 return functions
