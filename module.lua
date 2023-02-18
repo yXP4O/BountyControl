@@ -236,4 +236,25 @@ functions.crashHelper = function(hostOf, hostName)
     end
 end
 
+functions.minifyNum = function(num)
+    num = tonumber(num)
+    if num:len() == 4 then
+        return num:sub(1,1).."."..num:sub(2,2).."K"
+    elseif num:len() == 5 then
+        return num:sub(1,2).."."..num:sub(3,4).."K"
+    elseif num:len() == 6 then
+        return num:sub(1,3).."."..num:sub(4,5).."K"
+    elseif num:len() == 7 then
+        return num:sub(1,1).."."..num:sub(2,3).."M"
+    elseif num:len() == 8 then
+        return num:sub(1,2).."."..num:sub(3,4).."M"
+    elseif num:len() == 9 then
+        return num:sub(1,3).."."..num:sub(4,5).."M"
+    elseif num:len() == 10 then
+        return num:sub(1,1).."."..num:sub(2,3).."B"
+    end
+
+    return nil
+end
+
 return functions
