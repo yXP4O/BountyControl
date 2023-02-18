@@ -187,7 +187,7 @@ functions.crashHelper = function(hostOf, hostName)
                         end
                     end
     
-                    if #hostChar.Backpack >= 1300 then
+                    if #hostChar.Backpack >= math.random(1250, 1300) then
                         for i,v in pairs(#hostChar.Backpack:GetChildren()) do
                             if v:IsA("Tool") then
                                 v.Parent = hostChar.Character
