@@ -669,8 +669,8 @@ if isHost then
         alert("Total bounty "..tostring(newAmt).." total worth "..tostring(newCashAmt), 10)
     end
 
-    local function makeCard(alt)
-        if not AltsPanel:FindFirstChild("AltCardHolder_"..tostring(alt)) then
+    local function makeCard(alt, placeHolder)
+        if not AltsPanel:FindFirstChild("AltCardHolder_"..tostring(alt).."_"..tostring(placeHolder)) then
             local AltCardHolder = Instance.new("Frame")
             local selectButton = Instance.new("TextButton")
             local UICorner = Instance.new("UICorner")
@@ -731,18 +731,30 @@ if isHost then
         end
     end
 
-    for i,v in pairs(game:service"Players":GetChildren()) do
-        if table.find(getgenv().BountyControl["alts"], v.UserId) then
-            task.spawn(function()
-                pcall(function()
-                    if not workspace.Players:FindFirstChild(v.Name) then
-                        repeat wait(0.01) until workspace.Players:FindFirstChild(v.Name)
-                    end
+    for i=1,#getgenv().BountyControl["alts"] do
+        local data = functions.checkPlayer(tonumber(v))
+        if data then
+            local newAlt = game:service"Players":GetPlayerByUserId(tonumber(v))
+            if newAlt then
+                if not workspace.Players:FindFirstChild(newAlt.Name) then
+                    repeat wait(0.01) until workspace.Players:FindFirstChild(newAlt.name)
+                end
 
-                    makeCard(v.UserId)
-                end)
-            end)
+                makeCard(tonumber(v))
+            end
         end
+    end
+
+    local function indentifyPlacement(id)
+        local c = 1
+        for i=1,#getgenv().BountyControl["alts"] do
+            if getgenv().BountyControl["alts"][c] == tonumber(id) then
+                return c
+            end
+            c = c + 1
+        end
+
+        return nil
     end
 
     local function cleanUpAlts()
@@ -756,6 +768,17 @@ if isHost then
                 end
             end
         end
+
+        --[[
+        for i,v in pairs(AltsPanel:GetChildren()) do
+            if v:IsA("Frame") then
+                v.Visible = false
+            end
+        end
+
+        for i,v in pairs(AltsPanel:GetChildren()) do
+        end
+        ]]
     end
 
     game:service"Players".PlayerAdded:Connect(function(plr)
