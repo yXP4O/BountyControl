@@ -78,11 +78,7 @@ game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFilteri
             local myId = functions.fetchMyId(getgenv().BountyControl["alts"], player.UserId)
             local newBreak = functions.splitString(msg[2])
             if table.find(newBreak, myId) then
-                if player.UserId == getgenv().BountyControl["host"] then
-                    functions.crashHelper(true, getgenv().BountyControl["host"])
-                else
-                    functions.crashHelper(false, getgenv().BountyControl["host"])
-                end
+                functions.crashHelper()
             end
         elseif msg[1]:lower() == ".t" then
             secureEnable = false
