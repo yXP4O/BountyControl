@@ -138,4 +138,13 @@ functions.kick = function(plr) -- server kick a buyer / hacker anyone.
     MainEvent:FireServer("VIP_CMD","Kick",game:service"Players"[plr])
 end
 
+functions.getPlayer = function(arg)
+    for i,v in pairs(game:service"Players":GetChildren()) do
+        if v.Name:lower():find(arg:lower()) then
+            return v
+        end
+    end
+    return nil
+end
+
 return functions
