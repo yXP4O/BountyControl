@@ -161,7 +161,7 @@ functions.crashHelper = function(hostOf, hostName)
     end
 
     if hostOf then
-        local hostChar = game:service"Players":FindFirstChild(hostName)
+        local hostChar = game:service"Players":GetPlayerByUserId(hostName)
 
         task.spawn(function()
             while true do wait(0.01)
