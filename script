@@ -1,19 +1,10 @@
-getgenv().BountyControl = {
-    host = 3609673269,
-    fps = 15,
-    alts = { -- include host
-        1234567890,
-        1234567890,
-    }
-}
-
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
 repeat wait(0.001) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
 
-local testMode = true
+local testMode = false
 if testMode then
     local newIDS = {}
     for i,v in pairs(game:service"Players":GetChildren()) do
