@@ -1,44 +1,26 @@
---[[
-: steps
-1. the host on the setting, you put the ID of the crasher or your main acc
-2. you can set the fps for your alts, 1-3 reco
-3. don't press start until you fully loaded your accs that will help u.
-
-recommend:
-- put this on auto-exec
-]] 
-
 getgenv().G_Settings = {
     host = getgenv().BountyControl["host"],
     fps = getgenv().BountyControl["fps"]
 }
 
--- [[ no skids allowed no touch code below! ]] --
-
--- waits for the game to load if its not loaded already.
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
--- waits for your LocalPlayer character to be fully loaded
 repeat wait(0.001) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
 
--- dumb vars
 local player = game:service"Players".LocalPlayer
 local isCrasher = G_Settings['host'] == player.UserId
 local enabled = false
 
--- chat a message function
 local function sayMsg(msg)
     game:service"ReplicatedStorage".DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg, 'All')
 end
 
--- tool count function
 local function countTools()
     return #player.Backpack:GetChildren()
 end
 
--- reset your character
 local function resetChar()
     for i,v in pairs(player.Character:GetChildren()) do
         if v:IsA("MeshPart") or v:IsA("BasePart") or v:IsA("Accessory") then
@@ -47,7 +29,6 @@ local function resetChar()
     end
 end
 
--- anti afk
 player.Idled:Connect(function()
     game:service"VirtualUser":Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
     wait(1)
@@ -92,6 +73,7 @@ if isCrasher then
         end
     end)
 
+    local stop = false
     task.spawn(function()
         while true do wait(0.01)
             if enabled then
@@ -112,7 +94,7 @@ if isCrasher then
                     fireclickdetector(workspace.Ignored.Shop:FindFirstChild("[Flowers] - $5"):FindFirstChild("ClickDetector"))
 
                     for i,v in pairs(workspace.Ignored:GetChildren()) do
-                        if v.Name:lower():find("flower") and (player.Character.HumanoidRootPart.Position - v.Position).Magnitude <= 15 then
+                        if v.Name:lower():find("flower") and (player.Character.HumanoidRootPart.Position - v.Position).Magnitude <= 20 then
                             pcall(function() fireclickdetector(v:FindFirstChild("ClickDetector")) end)
                         end
                     end
@@ -121,6 +103,9 @@ if isCrasher then
             totalTools = countTools()
             txt:Update("Status: "..tostring(math.floor(totalTools)).."/"..tostring(math.floor(maximumTools)).." %"..tostring(string.format("%.2f",totalTools/maximumTools*100)))
             if tonumber(totalTools) >= tonumber(maximumTools) then
+                stop = true
+                player.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.new(5000,5000,5000)
+                wait(0.2)
                 for i,v in pairs(player.Backpack:GetChildren()) do
                     if v:IsA("Tool") then
                         v.Parent = player.Character
@@ -190,13 +175,14 @@ else
                                 if m.Name:lower():find("flower") then
                                     m.Parent = player.Character
                                     m:Activate()
-                                    wait(1)
+                                    wait(0.5)
                                 end
                             end
                             wait()
                             for i,v in pairs(player.Character:GetChildren()) do
-                                if v:IsA("Tool") then
-                                    v.Parent = player.Backpack
+                                if v:IsA("Tool") and v.Name:lower():find("flower") then
+                                    v:Activate()
+                                    wait(0.5)
                                 end
                             end
                             if not player.Backpack:FindFirstChild("[FlowersTool]") and not player.Character:FindFirstChild("[FlowersTool]") then
