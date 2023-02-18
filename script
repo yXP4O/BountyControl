@@ -4,7 +4,7 @@ end
 
 repeat wait(0.001) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
 
-local testMode = false
+local testMode = true
 if testMode then
     local newIDS = {}
     for i,v in pairs(game:service"Players":GetChildren()) do
@@ -112,10 +112,11 @@ player.CharacterAdded:Connect(function()
     functions.tpHome()
 end)
 
+functions.blockScreen()
+functions.lowGFX(BountyControl['fps'])
+
 task.spawn(function()
     functions.tpHome()
-    functions.blockScreen()
-    functions.lowGFX(BountyControl['fps'])
 
     while true do wait(0.01)
         if secureEnable == true then
