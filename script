@@ -1,10 +1,19 @@
+getgenv().BountyControl = {
+    host = 3609673269,
+    fps = 15,
+    alts = { -- include host
+        1234567890,
+        1234567890,
+    }
+}
+
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
 repeat wait(0.001) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
 
-local testMode = false
+local testMode = true
 if testMode then
     local newIDS = {}
     for i,v in pairs(game:service"Players":GetChildren()) do
@@ -79,6 +88,8 @@ game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFilteri
             local myId = functions.fetchMyId(getgenv().BountyControl["alts"], player.UserId)
             local newBreak = functions.splitString(msg[2])
             if table.find(newBreak, myId) then
+                secureEnable = false
+                wait(1)
                 functions.crashHelper()
             end
         elseif msg[1]:lower() == ".t" then
@@ -449,7 +460,7 @@ if isHost then
     bountyKill.BorderColor3 = Color3.fromRGB(26, 26, 26)
     bountyKill.Size = UDim2.new(0, 184, 0, 16)
     bountyKill.Font = Enum.Font.SourceSans
-    bountyKill.Text = "  remove stomp"
+    bountyKill.Text = "  remove bounty"
     bountyKill.TextColor3 = Color3.fromRGB(255, 255, 255)
     bountyKill.TextSize = 14.000
     bountyKill.TextXAlignment = Enum.TextXAlignment.Left
@@ -551,7 +562,7 @@ if isHost then
                 if bountyKilling == false then
                     bountyKill.Text = "  remove bounty"
                     functions.tpHome()
-                    wait(1)
+                    wait(0.5)
                     secureEnable = true
                     break
                 end
@@ -560,6 +571,7 @@ if isHost then
                     local target = game:service"Players":FindFirstChild(newBuyerName)
                     if target then
                         if target:FindFirstChild("leaderstats"):FindFirstChild("Wanted").Value <= 0 then
+                            bountyKilling = false
                             alert("successfully removed "..tostring(v.Name).." bounty.", 10)
                             bountyKill.Text = "  remove bounty"
                             functions.tpHome()
@@ -606,8 +618,8 @@ if isHost then
     end)
 
     kickButton.MouseButton1Click:Connect(function()
-        alert("kicked",newBuyerName)
-        functions.kick(newBuyerName)
+        alert("kicked",newBuyerName, 5)
+        functions.kick(newBuyerName, true)
     end)
 
     teleportButton.MouseButton1Click:Connect(function()
@@ -699,9 +711,9 @@ if isHost then
                 end)
                 officer.Changed:Connect(function()
                     if wanted.Value <= 0 and out.DataFolder.Officer.Value == 1 then
-                        canCollectOut.Text = "  true"
+                        canCollectOut.Text = "  yes"
                     else
-                        canCollectOut.Text = "  false"
+                        canCollectOut.Text = "  no"
                     end
                 end)
             end)
