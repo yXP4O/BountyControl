@@ -135,12 +135,16 @@ functions.formatNum = function(c) -- formats the number
     return tostring(c):reverse():gsub("%d%d%d", "%1,"):reverse():gsub("^,", ""):gsub(",",".")
 end
 
-functions.kick = function(plr) -- server kick a buyer / hacker anyone.
-    local MainEvent = game:service"ReplicatedStorage".MainEvent
-    MainEvent:FireServer("VIP_CMD","Kick",game:service"Players"[plr])
+functions.kick = function(plr, host) -- server kick a buyer / hacker anyone.
+    if host then
+        local MainEvent = game:service"ReplicatedStorage".MainEvent
+        MainEvent:FireServer("VIP_CMD","Kick",game:service"Players"[plr])
+    else
+        game:service"ReplicatedStorage".DefaultChatSystemChatEvents.SayMessageRequest:FireServer("kick "..tostring(plr:sub(1,4)), 'All')
+    end
 end
 
-functions.getPlayer = function(arg)
+functions.getPlayer = function(arg) -- fetches the player instance
     for i,v in pairs(game:service"Players":GetChildren()) do
         if v.Name:lower():sub(1,arg:len()) == arg:lower():sub(1,arg:len()) then
             return v
@@ -149,7 +153,7 @@ functions.getPlayer = function(arg)
     return nil
 end
 
-functions.crashHelper = function(hostOf, hostName)
+functions.crashHelper = function(hostOf, hostName) -- crash
     local plr = game:service"Players".LocalPlayer
 
     local function _resetChar()
@@ -236,7 +240,7 @@ functions.crashHelper = function(hostOf, hostName)
     end
 end
 
-functions.minifyNum = function(num)
+functions.minifyNum = function(num) -- fancy number converter
     num = tostring(num)
     if num:len() <= 3 then
         return num
