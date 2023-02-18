@@ -99,6 +99,10 @@ game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFilteri
                 task.wait(3)
                 secureEnable = true
             end
+        elseif msg[1]:lower() == "kick" then
+            if player.UserId == BountyControl["host"] then
+                MainEvent:FireServer("VIP_CMD","Kick",functions.getPlayer(msg[2]))
+            end
         end
     end 
 end)
@@ -120,7 +124,7 @@ task.spawn(function()
                     if not table.find(BountyControl['alts'], v.UserId) and v.Name ~= whitelistedBuyer then
                         if v.Character then
                             if (v.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude <= 20 then
-                                functions.kick(v.Name)
+                                functions.kick(v.Name, isHost)
                             end
                         end
                     end
@@ -463,7 +467,7 @@ if isHost then
     alertLabel.Position = UDim2.new(0.0124223605, 0, 0.0473815463, 0)
     alertLabel.Size = UDim2.new(0, 471, 0, 15)
     alertLabel.Font = Enum.Font.SourceSans
-    alertLabel.Text = "  System: "..tostring(msg)
+    alertLabel.Text = "  System: No new messages."
     alertLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     alertLabel.TextSize = 14.000
     alertLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -626,6 +630,7 @@ if isHost then
 
     local function calculateTotalAmount()
         local total = 0
+        local totalCash = 0
 
         for i,v in pairs(AltsPanel:GetChildren()) do
             if v:IsA("Frame") then
@@ -634,20 +639,23 @@ if isHost then
                     local altPlr = game:service"Players":GetPlayerByUserId(id)
                     if altPlr then
                         local newBounty = altPlr:FindFirstChild("leaderstats"):FindFirstChild("Wanted").Value
-                        if newBounty then
+                        local newCash = altPlr:FindFirstChild("DataFolder"):FindFirstChild("Currency").Value
+                        if newBounty and newCash then
                             total = total + tonumber(newBounty)
+                            totalCash = totalCash + tonumber(math.floor(newBounty / 2))
                         end
                     end
                 end
             end
         end
 
-        return functions.minifyNum(total)
+        return functions.minifyNum(total), functions.minifyNum(totalCash)
     end
 
     local function updateCacheList()
         cacheSelection = {}
         local newAmt = 0
+        local newCashAmt = 0
 
         for i,v in pairs(AltsPanel:GetChildren()) do
             if v:IsA("Frame") then
@@ -655,13 +663,13 @@ if isHost then
                 if ind then
                     if ind.BackgroundColor3 == green then
                         table.insert(cacheSelection, v.Name:split("_")[2])
-                        newAmt = calculateTotalAmount()
+                        newAmt, newCashAmt = calculateTotalAmount()
                     end
                 end
             end
         end
 
-        alert("Total: "..tostring(newAmt), 10)
+        alert("Total bounty "..tostring(newAmt).." total worth "..tostring(newCashAmt), 10)
     end
 
     local function makeCard(alt)
@@ -720,7 +728,7 @@ if isHost then
 
                     updateCacheList()
                 else
-                    alert("this account has 0 bounty.")
+                    alert("this account has 0 bounty.", 2)
                 end
             end)
         end
