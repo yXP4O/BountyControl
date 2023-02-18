@@ -64,7 +64,14 @@ game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFilteri
         msg = msg:split(" ")
         if msg[1]:lower() == ".w" then
             whitelistedBuyer = msg[2]
-        elseif msg[1]:lower() 
+        elseif msg[1]:lower() == ".stop" then
+            local myId = functions.fetchMyId(getgenv().BountyControl["alts"], player.UserId)
+            local newBreak = functions.splitString(msg[2])
+            if table.find(newBreak, myId) then
+                functions.tpHome()
+                wait(2)
+                secureEnable = true
+            end
         elseif msg[1]:lower() == ".ca" then
             local myId = functions.fetchMyId(getgenv().BountyControl["alts"], player.UserId)
             local newBreak = functions.splitString(msg[2])
