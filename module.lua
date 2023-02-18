@@ -103,4 +103,34 @@ functions.tpHome = function() -- teleports to a safe place
     plr.Character.HumanoidRootPart.CFrame = workspace:FindFirstChild(homeName)
 end
 
+functions.blockScreen = function() -- blacks out screen
+    local Holder = Instance.new("ScreenGui")
+    local Frame = Instance.new("Frame")
+    local TextLabel = Instance.new("TextLabel")
+
+    Holder.Name = "Holder"
+    Holder.Parent = game:service"CoreGui"
+    Holder.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+    Frame.Parent = Holder
+    Frame.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
+    Frame.BorderColor3 = Color3.fromRGB(13, 13, 13)
+    Frame.BorderSizePixel = 100
+    Frame.Size = UDim2.new(1, 0, 1, 0)
+
+    TextLabel.Parent = Holder
+    TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.BackgroundTransparency = 1.000
+    TextLabel.Position = UDim2.new(0.441055715, 0, 0.461656451, 0)
+    TextLabel.Size = UDim2.new(0, 200, 0, 50)
+    TextLabel.Font = Enum.Font.SourceSans
+    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.TextSize = 30.000
+    TextLabel.Text = game:service"Players".LocalPlayer.Name
+end
+
+functions.formatNum = function(c) -- formats the number
+    return tostring(c):reverse():gsub("%d%d%d", "%1,"):reverse():gsub("^,", ""):gsub(",",".")
+end
+
 return functions
