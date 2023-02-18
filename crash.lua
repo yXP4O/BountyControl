@@ -11,7 +11,7 @@ repeat wait(0.001) until workspace.Players:FindFirstChild(game:service"Players".
 
 local player = game:service"Players".LocalPlayer
 local isCrasher = G_Settings['host'] == player.UserId
-local enabled = false
+local enabled = true
 
 local function sayMsg(msg)
     game:service"ReplicatedStorage".DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg, 'All')
