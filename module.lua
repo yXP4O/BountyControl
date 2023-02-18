@@ -36,7 +36,7 @@ functions.fetchMyId = function(alt_list, alt_id) -- gets the alt / host indentif
     }
 
     for i,v in pairs(alt_list) do
-        if v == game:service"Players".LocalPlayer.UserId then
+        if v == alt_id then
             return lib[i]
         end 
     end
