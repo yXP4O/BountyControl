@@ -46,6 +46,7 @@ local whitelistedBuyer = ""
 local secureEnable = false
 local stopProcess = false
 local crashModeEnabled = false
+local bountyKilling = false
 
 game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFiltering.OnClientEvent:Connect(function(data) 
     local user = data.FromSpeaker
@@ -427,6 +428,21 @@ if isHost then
     UICorner_7.CornerRadius = UDim.new(0, 3)
     UICorner_7.Parent = kickButton
 
+    local bountyKill = Instance.new("TextButton")
+
+    bountyKill.Name = "bountyKill"
+    bountyKill.Parent = functionsCard
+    bountyKill.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+    bountyKill.BorderColor3 = Color3.fromRGB(26, 26, 26)
+    bountyKill.Size = UDim2.new(0, 184, 0, 16)
+    bountyKill.Font = Enum.Font.SourceSans
+    bountyKill.Text = "  remove stomp"
+    bountyKill.TextColor3 = Color3.fromRGB(255, 255, 255)
+    bountyKill.TextSize = 14.000
+    bountyKill.TextXAlignment = Enum.TextXAlignment.Left
+
+    UICorner_7:Clone().Parent = bountyKill
+
     crashMode.Name = "crashMode"
     crashMode.Parent = functionsCard
     crashMode.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
@@ -508,6 +524,55 @@ if isHost then
         return c
     end
 
+    local newBuyerName = ""
+
+    bountyKill.MouseButton1Click:Connect(function()
+        bountyKilling = not bountyKilling
+        if bountyKilling then
+            bountyKill.Text = "  stop"
+
+            local firstTime = tick()
+            secureEnable = false
+            while bountyKill.Text == "  stop" do
+                wait(0.01)
+                if bountyKilling == false then
+                    bountyKill.Text = "  remove bounty"
+                    break
+                end
+
+                pcall(function()
+                    local target = game:service"Players":FindFirstChild(newBuyerName)
+                    if target then
+                        if target.Character and player.Character then
+                            if firstTime <= tick() then
+                                firstTime = firstTime + 4
+                                functions.say("stop moving please, you have bounty.")
+                            end
+
+                            if target.Character:FindFirstChild("BodyEffects"):FindFirstChild("K.O").Value == false and target.Character:FindFirstChild("BodyEffects"):FindFirstChild("Dead").Value == false then
+                                player.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,-0.3)
+                                if player.Backpack:FindFirstChild("Combat") then
+                                    player.Backpack:FindFirstChild("Combat").Parent = player.Character
+                                end
+                                player.Character:FindFirstChild("Combat"):Activate()
+                            elseif target.Character:FindFirstChild("BodyEffects"):FindFirstChild("K.O").Value == true and target.Character:FindFirstChild("BodyEffects"):FindFirstChild("Dead").Value == false then
+                                player.Character.HumanoidRootPart.CFrame = CFrame.new(target.Character.UpperTorso.Position) + Vector3.new(0,1.3,0)
+                                MainEvent:FireServer("Stomp")
+                            end
+
+                            if target:FindFirstChild("leaderstats"):FindFirstChild("Wanted").Value <= 0 then
+                                alert("successfully removed "..tostring(v.Name).." bounty.", 10)
+                                bountyKill.Text = "  remove bounty"
+                            end
+                        end
+                    end
+                end)
+            end
+        else
+            bountyKill.Text = "  remove bounty"
+        end
+    end)
+
     cancelTpButton.MouseButton1Click:Connect(function()
         local newAssignment = ""
         for i,v in pairs(getAllSelectedChildren()) do
@@ -516,8 +581,6 @@ if isHost then
 
         functions.say(".stop "..tostring(newAssignment))
     end)
-
-    local newBuyerName = ""
 
     kickButton.MouseButton1Click:Connect(function()
         alert("kicked",newBuyerName)
@@ -596,9 +659,9 @@ if isHost then
                 local officer = out.DataFolder.Officer
 
                 if wanted.Value <= 0 and out.DataFolder.Officer.Value == 1 then
-                    canCollectOut.Text = "  true"
+                    canCollectOut.Text = "  yes"
                 else
-                    canCollectOut.Text = "  false"
+                    canCollectOut.Text = "  player isn't a cop or has bounty."
                 end
 
                 cashOut.Text = "  $"..tostring(functions.formatNum(cash.Value))
