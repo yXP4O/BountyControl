@@ -100,7 +100,7 @@ functions.tpHome = function() -- teleports to a safe place
         Part.Anchored = true
     end
 
-    plr.Character.HumanoidRootPart.CFrame = workspace:FindFirstChild(homeName).CFrame
+    plr.Character.HumanoidRootPart.CFrame = workspace:FindFirstChild(homeName).CFrame * CFrame.new(0,2,0)
 end
 
 functions.blockScreen = function() -- blacks out screen
