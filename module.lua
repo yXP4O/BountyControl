@@ -35,9 +35,11 @@ functions.fetchMyId = function(alt_list, alt_id) -- gets the alt / host indentif
         "E","F","G","H","I","J","K","L","M","N"
     }
 
+    local c = 0
     for i,v in pairs(alt_list) do
+        c = c + 1
         if v == alt_id then
-            return lib[i]
+            return lib[c]
         end 
     end
     return nil
