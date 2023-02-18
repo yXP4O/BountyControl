@@ -85,11 +85,25 @@ game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFilteri
             secureEnable = false
             local myId = functions.fetchMyId(getgenv().BountyControl["alts"], player.UserId)
             local newBreak = functions.splitString(msg[2])
+
+            local function getSelfPos()
+                local c = 1
+                for i=1,#newBreak do
+                    if newBreak[c] == myId then
+                        return c
+                    end
+                    c = c + 1
+                end
+                return nil
+            end
+
             if table.find(newBreak, myId) then
                 local buyerChar = game:service"Players":FindFirstChild(msg[3])
                 if buyerChar.Character then
-                    player.Character.HumanoidRootPart.CFrame = buyerChar.Character.HumanoidRootPart.CFrame * CFrame.new(math.random(-3,3),0,math.random(-3,3))
-                    functions.say("Knock and arrest me")
+                    local newPos = functions.requestPos(getSelfPos())
+                    local x,y,z = newPos:split(",")[1],newPos:split(",")[2],newPos:split(",")[3]
+                    player.Character.HumanoidRootPart.CFrame = buyerChar.Character.HumanoidRootPart.CFrame * CFrame.new(x,y,z)
+                    functions.say("Knock & arrest me.")
                 end
             else
                 functions.tpHome()
@@ -223,7 +237,6 @@ if isHost then
         local cur_size = UIListLayout.AbsoluteContentSize
         AltsPanel.CanvasSize = UDim2.new(0,cur_size.X,0,cur_size.Y)
     end)
-
 
     MainPanel.Name = "MainPanel"
     MainPanel.Parent = MainFrame
@@ -537,12 +550,23 @@ if isHost then
                 wait(0.01)
                 if bountyKilling == false then
                     bountyKill.Text = "  remove bounty"
+                    functions.tpHome()
+                    wait(1)
+                    secureEnable = true
                     break
                 end
 
                 pcall(function()
                     local target = game:service"Players":FindFirstChild(newBuyerName)
                     if target then
+                        if target:FindFirstChild("leaderstats"):FindFirstChild("Wanted").Value <= 0 then
+                            alert("successfully removed "..tostring(v.Name).." bounty.", 10)
+                            bountyKill.Text = "  remove bounty"
+                            functions.tpHome()
+                            wait(1)
+                            secureEnable = true
+                        end
+
                         if target.Character and player.Character then
                             if firstTime <= tick() then
                                 firstTime = firstTime + 4
@@ -559,17 +583,16 @@ if isHost then
                                 player.Character.HumanoidRootPart.CFrame = CFrame.new(target.Character.UpperTorso.Position) + Vector3.new(0,1.3,0)
                                 MainEvent:FireServer("Stomp")
                             end
-
-                            if target:FindFirstChild("leaderstats"):FindFirstChild("Wanted").Value <= 0 then
-                                alert("successfully removed "..tostring(v.Name).." bounty.", 10)
-                                bountyKill.Text = "  remove bounty"
-                            end
                         end
                     end
                 end)
             end
         else
             bountyKill.Text = "  remove bounty"
+            wait(1)
+            functions.tpHome()
+            wait(1)
+            secureEnable = true
         end
     end)
 
@@ -661,7 +684,8 @@ if isHost then
                 if wanted.Value <= 0 and out.DataFolder.Officer.Value == 1 then
                     canCollectOut.Text = "  yes"
                 else
-                    canCollectOut.Text = "  player isn't a cop or has bounty."
+                    alert("User needs to become a cop.", 15)
+                    canCollectOut.Text = "  no"
                 end
 
                 cashOut.Text = "  $"..tostring(functions.formatNum(cash.Value))
