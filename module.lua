@@ -43,4 +43,64 @@ functions.fetchMyId = function(alt_list, alt_id) -- gets the alt / host indentif
     return nil
 end
 
+functions.say = function(msg) -- sends a chat message / command
+    game:service"ReplicatedStorage".DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg, 'All')
+end
+
+functions.resetChar = function() -- force resets your character
+    for i,v in pairs(game:service"Players".LocalPlayer.Character:GetChildren()) do
+        if v:IsA("MeshPart") or v:IsA("BasePart") then
+            v:Destroy()
+        end
+    end
+end
+
+functions.lowGFX = function(fps) -- low gfx / fps booster
+    local fps_capper = setfpscap or set_fps_cap
+
+    pcall(function() fps_capper(fps) end)
+    settings().Physics.PhysicsEnvironmentalThrottle = 1
+    settings().Rendering.QualityLevel = 'Level01'
+    UserSettings():GetService("UserGameSettings").MasterVolume = 0
+    for i,v in pairs(game:GetDescendants()) do
+        if v:IsA("Part") then
+            v.Material = Enum.Material.Pavement
+            v.Transparency = 1
+        elseif v:IsA("Decal") then
+            v:Destroy()
+        elseif v:IsA("Texture") then
+            v:Destroy()
+        elseif v:IsA("MeshPart") then
+            v.TextureID = 0
+            v.Transparency = 1
+        elseif v.Name == "Terrian" then
+            v.WaterReflectace = 1
+            v.WaterTransparency = 1
+        elseif v:IsA("SpotLight") then
+            v.Range = 0
+            v.Enabled = false
+        elseif v:IsA("WedgePart") then
+            v.Transparency = 1
+        elseif v:IsA("UnionOperation") then
+            v.Transparency = 1
+        end
+    end
+end
+
+functions.tpHome = function() -- teleports to a safe place
+    local plr = game:service"Players".LocalPlayer
+    local homeName = "home_"..tostring(plr.Name)
+
+    if not workspace:FindFirstChild(homeName) then
+        local Part = Instance.new("Part", workspace)
+        Part.Name = homeName
+        Part.Size = Vector3.new(20,1,20)
+        Part.Transparency = 1
+        Part.CFrame = CFrame.new(math.random(-2000,2000), math.random(500,2000), math.random(-2000,2000))
+        Part.Anchored = true
+    end
+
+    plr.Character.HumanoidRootPart.CFrame = workspace:FindFirstChild(homeName)
+end
+
 return functions
