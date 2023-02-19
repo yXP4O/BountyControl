@@ -230,6 +230,7 @@ functions.removeCuffs = function()
                     player.Backpack:FindFirstChild("[Key]").Parent = player.Character
                 end
                 player.Character:FindFirstChild("[Key]"):Activate()
+                functions.tpHome()
             end
         end
     end
