@@ -194,4 +194,45 @@ functions.requestPos = function(pose)
     return circle[pose]
 end
 
+functions.sarchTool = function(baseName)
+    baseName = tostring(baseName):lower()
+    for i,v in pairs(workspace.Ignored.Shop:GetChildren()) do
+        if v.Name:lower():sub(1,baseName:len()) == baseName:sub(1,baseName:len()) then
+            return v
+        end
+    end
+    return nil
+end
+
+functions.removeTools = function()
+    for i,v in pairs(game:service"Players".LocalPlayer.Character:GetChildren()) do
+        if v:IsA("Tool") then
+            v.Parent = game:service"Players".LocalPlayer.Backpack
+        end
+    end
+end
+
+functions.removeCuffs = function()
+    local player = game:service"Players".LocalPlayer
+    local keys = functions.sarchTool("[Key]")
+    functions.removeTools()
+
+    if player.Character and keys then
+        if player.Character:FindFirstChild("BodyEffects"):FindFirstChild("Cuff").Value == true and player.DataFolder.Currency.Value >= 200 then
+            if not player.Character:FindFirstChild("[Key]") and not player.Backpack:FindFirstChild("[Key]") then
+                repeat
+                    player.Character.HumanoidRootPart.CFrame = keys.Head.CFrame * CFrame.new(0,1.3,0)
+                    fireclickdetector(keys:FindFirstChildWhichIsA("ClickDetector"))
+                    wait(0.01)
+                until player.Character:FindFirstChild("[Key]") or player.Backpack:FindFirstChild("[Key]")
+            
+                if player.Backpack:FindFirstChild("[Key]") then
+                    player.Backpack:FindFirstChild("[Key]").Parent = player.Character
+                end
+                player.Character:FindFirstChild("[Key]"):Activate()
+            end
+        end
+    end
+end
+
 return functions
