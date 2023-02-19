@@ -58,6 +58,8 @@ functions.makeNewPos = function(mainPos)
 end
 
 functions.gfx = function(fpsAmt, gfxMode)
+    fpsAmt = fpsAmt or 3
+    gfxMode = gfxMode or false
     local fpsFunc = setfpscap or set_fps_cap
     pcall(function() fpsFunc(fpsAmt) end)
     settings().Physics.PhysicsEnvironmentalThrottle = 1
