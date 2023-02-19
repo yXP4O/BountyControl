@@ -72,7 +72,7 @@ game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFilteri
             local newBreak = functions.splitString(msg[2])
             if table.find(newBreak, myId) then
                 functions.tpHome()
-                wait(2)
+                wait(0.5)
                 secureEnable = true
             end
         elseif msg[1]:lower() == ".ca" then
@@ -80,7 +80,7 @@ game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFilteri
             local newBreak = functions.splitString(msg[2])
             if table.find(newBreak, myId) then
                 secureEnable = false
-                wait(1)
+                wait(0.5)
                 functions.crashHelper()
             end
         elseif msg[1]:lower() == ".t" then
@@ -145,6 +145,12 @@ task.spawn(function()
                 end
             end)
         end
+
+        pcall(function()
+            if player.Character:FindFirstChild("BodyEffects"):FindFirstChild("Cuff").Value == true then
+                functions.removeCuffs()
+            end
+        end)
     end
 end)
 
@@ -576,7 +582,7 @@ if isHost then
                             alert("successfully removed "..tostring(v.Name).." bounty.", 10)
                             bountyKill.Text = "  remove bounty"
                             functions.tpHome()
-                            wait(1)
+                            wait(0.5)
                             secureEnable = true
                         end
 
@@ -604,7 +610,7 @@ if isHost then
             bountyKill.Text = "  remove bounty"
             wait(1)
             functions.tpHome()
-            wait(1)
+            wait(0.5)
             secureEnable = true
         end
     end)
