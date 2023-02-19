@@ -2,6 +2,8 @@ if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
+if not table.find(getgenv().tpers,game:service"Players".LocalPlayer.UserId) then return end
+
 repeat wait(0.01) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
 
 game:GetService("RunService"):Set3dRenderingEnabled(false)
