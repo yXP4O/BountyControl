@@ -1,0 +1,105 @@
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+repeat wait(0.01) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
+
+game:GetService("RunService"):Set3dRenderingEnabled(false)
+UserSettings().GameSettings.MasterVolume = 0
+pcall(function() setfpscap(5) end)
+
+local remotes = {
+    "CHECKER_1",
+    "CHECKER_2",
+    "TeleportDetect",
+    "OneMoreTime",
+    "BreathingHAMON",
+    "VirusCough"
+}
+
+local __namecall
+__namecall = hookmetamethod(game, "__namecall", function(...)
+    local args = {...}
+    local method = getnamecallmethod()
+    if (method == "FireServer" and args[1].Name == "MainEvent" and table.find(remotes, args[2])) then
+        return
+    end
+    return __namecall(table.unpack(args))
+end)
+
+local initalEnable = true
+game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFiltering.OnClientEvent:Connect(function(messageData) 
+    local user = game:service"Players":GetPlayerByUserId(game.Players:GetUserIdFromNameAsync(messageData.FromSpeaker))
+    local msg = messageData.Message
+    if user.UserId == getgenv().MainStomper then
+        if msg:lower() == "break" then
+            initalEnable = false
+            task.delay(60, function()
+                initalEnable = true
+            end)
+        end
+    end
+end)
+
+game:service"Players".LocalPlayer.Idled:connect(function()
+	game:service"VirtualUser":Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+	wait(1)
+	game:service"VirtualUser":Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
+
+task.spawn(function()
+    game:GetService("Lighting").GlobalShadows = false
+    game:GetService("Lighting").FogEnd = 9e9
+    settings().Rendering.QualityLevel = 1
+    for i,v in pairs(game:GetDescendants()) do
+        if v:IsA("Part") or v:IsA("UnionOperation") or v:IsA("MeshPart") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
+            v.Material = "Plastic"
+            v.Reflectance = 0
+            v.Transparency = 1
+        elseif v:IsA("Decal") then
+            v.Transparency = 1
+        elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+            v.Lifetime = NumberRange.new(0)
+        elseif v:IsA("Explosion") then
+            v.BlastPressure = 1
+            v.BlastRadius = 1
+        end
+    end
+    for i,v in pairs(game:GetService("Lighting"):GetDescendants()) do
+        if v:IsA("BlurEffect") or v:IsA("SunRaysEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
+            v.Enabled = false
+        end
+    end
+    workspace.DescendantAdded:Connect(function(child)
+        if child:IsA("ForceField") then
+            child:Destroy()
+        elseif child:IsA("Sparkles") then
+            child:Destroy()
+        elseif child:IsA("Smoke") or child:IsA("Fire") then
+            child:Destroy()
+        end
+    end)
+end)
+
+local poses = {
+    CFrame.new(67, 139, -692),
+    CFrame.new(66, 139, -690),
+    CFrame.new(66, 139, -689),
+    CFrame.new(68, 139, -688),
+    CFrame.new(71, 139, -690),
+    CFrame.new(70, 139, -691)
+}
+
+local plr = game:service"Players".LocalPlayer
+
+task.spawn(function()
+    while true do
+        if initalEnable then
+            pcall(function()
+                local newPos = poses[math.random(1, #poses)]
+                plr.Character.HumanoidRootPart.CFrame = newPos
+            end)
+        end
+        wait(0.3)
+    end
+end)
