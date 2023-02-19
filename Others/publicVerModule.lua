@@ -53,4 +53,50 @@ functions.sendMsg = function(msg)
     game:service"ReplicatedStorage".DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg, 'All')
 end
 
+functions.makeNewPos = function(mainPos)
+    return mainPos + Vector3.new(math.random(-2,2),0,math.random(-2,2))
+end
+
+functions.gfx = function(fpsAmt, gfxMode)
+    local fpsFunc = setfpscap or set_fps_cap
+    pcall(function() fpsFunc(fpsAmt) end)
+    settings().Physics.PhysicsEnvironmentalThrottle = 1
+    settings().Rendering.QualityLevel = 'Level01'
+    UserSettings():GetService("UserGameSettings").MasterVolume = 0
+    if gfxMode == true then
+        game:service"RunService":Set3dRenderingEnabled(false)
+    end
+    for i,v in pairs(game:GetDescendants()) do
+        if v:IsA("Part") then
+            v.Material = Enum.Material.Pavement
+            if gfxMode == true then
+                v.Transparency = 1
+            end
+        elseif v:IsA("Decal") then
+            v:Destroy()
+        elseif v:IsA("Texture") then
+            v:Destroy()
+        elseif v:IsA("MeshPart") then
+            v.TextureID = 0
+            if gfxMode == true then
+                v.Transparency = 1
+            end
+        elseif v.Name == "Terrian" then
+            v.WaterReflectace = 1
+            v.WaterTransparency = 1
+        elseif v:IsA("SpotLight") then
+            v.Range = 0
+            v.Enabled = false
+        elseif v:IsA("WedgePart") then
+            if gfxMode == true then
+                v.Transparency = 1
+            end
+        elseif v:IsA("UnionOperation") then
+            if gfxMode == true then
+                v.Transparency = 1
+            end
+        end
+    end
+end
+
 return functions
