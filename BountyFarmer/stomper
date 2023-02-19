@@ -1,0 +1,122 @@
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+repeat wait(0.01) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
+
+local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/theracisthub/libs/main/ocinhot"))()
+local main = lib:Create("AutoStomper")
+local player = game:service"Players".LocalPlayer
+
+local isMain = player.UserId == getgenv().MainStomper
+
+local remotes = {
+    "CHECKER_1",
+    "CHECKER_2",
+    "TeleportDetect",
+    "OneMoreTime",
+    "BreathingHAMON",
+    "VirusCough"
+}
+
+local __namecall
+__namecall = hookmetamethod(game, "__namecall", function(...)
+    local args = {...}
+    local method = getnamecallmethod()
+    if (method == "FireServer" and args[1].Name == "MainEvent" and table.find(remotes, args[2])) then
+        return
+    end
+    return __namecall(table.unpack(args))
+end)
+
+game:service"Players".LocalPlayer.Idled:connect(function()
+	game:service"VirtualUser":Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+	wait(1)
+	game:service"VirtualUser":Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
+
+game:service"Players".LocalPlayer.leaderstats.Wanted.Changed:Connect(function()
+    if game:service"Players".LocalPlayer.leaderstats.Wanted.Value >= 2000000 then
+        game:service"Players".LocalPlayer:Kick("overuled")
+    end
+end)
+
+local initalEnable = true
+game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFiltering.OnClientEvent:Connect(function(messageData) 
+    local user = game:service"Players":GetPlayerByUserId(game.Players:GetUserIdFromNameAsync(messageData.FromSpeaker))
+    local msg = messageData.Message
+    if user.UserId == getgenv().MainStomper then
+        if msg:lower() == "break" then
+            initalEnable = false
+            task.delay(60, function()
+                initalEnable = true
+            end)
+        end
+    end
+end)
+
+local autoStomp = false
+main:NewToggle("Auto Stomp","",false,function(bool)
+    autoStomp = bool
+end)
+
+local firstTime = tick() + getgenv().SleepTime
+
+task.spawn(function()
+    while true do
+        wait(0.35)
+        if autoStomp and initalEnable then
+            for i,v in pairs(game:service"Players":GetChildren()) do
+                if v.Character and v.Character.BodyEffects:FindFirstChild("K.O").Value == true then
+                    player.Character.HumanoidRootPart.CFrame = CFrame.new(v.Character.UpperTorso.Position) + Vector3.new(0,1.3,0)
+                    game:service"ReplicatedStorage".MainEvent:FireServer("Stomp")
+                end
+            end
+        end
+
+        if firstTime <= tick() then
+            game:service"ReplicatedStorage".DefaultChatSystemChatEvents.SayMessageRequest:FireServer("break", 'All')
+            firstTime = tick() + getgenv().SleepTime + 60
+        end
+    end
+end)
+
+main:NewButton("Low-GFX", "", function()
+    task.spawn(function()
+        game:GetService("Lighting").GlobalShadows = false
+        game:GetService("Lighting").FogEnd = 9e9
+        settings().Rendering.QualityLevel = 1
+        for i,v in pairs(game:GetDescendants()) do
+            if v:IsA("Part") or v:IsA("UnionOperation") or v:IsA("MeshPart") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
+                v.Material = "Plastic"
+                v.Reflectance = 0
+            elseif v:IsA("Decal") then
+                v.Transparency = 1
+            elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+                v.Lifetime = NumberRange.new(0)
+            elseif v:IsA("Explosion") then
+                v.BlastPressure = 1
+                v.BlastRadius = 1
+            end
+        end
+        for i,v in pairs(game:GetService("Lighting"):GetDescendants()) do
+            if v:IsA("BlurEffect") or v:IsA("SunRaysEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
+                v.Enabled = false
+            end
+        end
+        workspace.DescendantAdded:Connect(function(child)
+            task.spawn(function()
+                if child:IsA("ForceField") then
+                    game:GetService("RunService").Heartbeat:Wait()
+                    child:Destroy()
+                elseif child:IsA("Sparkles") then
+                    game:GetService("RunService").Heartbeat:Wait()
+                    child:Destroy()
+                elseif child:IsA("Smoke") or child:IsA("Fire") then
+                    game:GetService("RunService").Heartbeat:Wait()
+                    child:Destroy()
+                end
+            end)
+        end)
+    end)
+end)
