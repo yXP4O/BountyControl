@@ -30,6 +30,12 @@ game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFilteri
     end
 end)
 
+game:service"Players".LocalPlayer.Idled:connect(function()
+    game:service"VirtualUser":Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+    wait(1)
+    game:service"VirtualUser":Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
+
 if isKiller then
     local pos = CFrame.new(-771, 44, -862)
     local tool = "[Bat]"
