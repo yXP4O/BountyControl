@@ -14,7 +14,7 @@ functions.fetchJob = function()
     local url = "https://games.roblox.com/v1/games/2788229376/servers/Public?sortOrder=Asc&limit=100"
     local http = game:service"HttpService"
     local req = game:HttpGet(url)
-    
+
     local job = ""
     local lowest = 41
     local lowestPing = 100000
@@ -30,6 +30,27 @@ functions.fetchJob = function()
         end
     end
     return job
+end
+
+functions.getRawServerData = function()
+    local url = "https://games.roblox.com/v1/games/2788229376/servers/Public?sortOrder=Asc&limit=100"
+    local http = game:service"HttpService"
+    local req = game:HttpGet(url)
+
+    local result = {}
+    for i,v in pairs(http:JSONDecode(req)) do
+        if type(v) == "table" then
+            for c,n in pairs(v) do
+                table.insert(result, n["id"])
+            end
+        end
+    end
+    return result
+end
+
+functions.sendMsg = function(msg)
+    msg = msg or "hi"
+    game:service"ReplicatedStorage".DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg, 'All')
 end
 
 return functions
