@@ -17,6 +17,7 @@ functions.fetchJob = function()
 
     local job = ""
     local lowest = 41
+    local saved = {}
     local lowestPing = 100000
     for i,v in pairs(http:JSONDecode(req)) do
         if type(v) == "table" then
@@ -99,6 +100,23 @@ functions.gfx = function(fpsAmt, gfxMode)
             end
         end
     end
+end
+
+functions.sendWebhook = function(url, payload)
+    local request = HttpPost or request or http_request or syn.request
+    url = url or nil
+    request({
+        Url = url,
+        Body = payload,
+        Method = "POST",
+        Headers = {
+            ["content-type"] = "application/json"
+        }
+    })
+end
+
+functions.formatNum = function(c)
+    return tostring(c):reverse():gsub("%d%d%d", "%1,"):reverse():gsub("^,", ""):gsub(",",".")
 end
 
 return functions
