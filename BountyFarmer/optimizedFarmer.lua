@@ -33,16 +33,11 @@ game:service"Players".LocalPlayer.Idled:connect(function()
     game:service"VirtualUser":Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
 
-local Part = Instance.new("Part", workspace)
-Part.Size = Vector3.new(100,1,100)
-Part.Transparency = 1
-Part.CFrame = CFrame.new(1000,10000,1000)
-Part.Anchored = true
-
 if table.find(getgenv().Seperators["stompers"], player.UserId) then
     local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/theracisthub/libs/main/ocinhot"))()
     local main = lib:Create("AutoStomper")
     local txt = main:NewLabel("Rate: ???")
+    local earned = main:NewLabel("Earned: ???")
 
     game:service"Players".LocalPlayer.leaderstats.Wanted.Changed:Connect(function()
         if game:service"Players".LocalPlayer.leaderstats.Wanted.Value >= 2000000 then
@@ -55,6 +50,7 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
     game:service"RunService":BindToRenderStep(functionName, 1, function()
         for i,v in pairs(game:service"Players":GetChildren()) do
             if v.Name ~= game:service"Players".LocalPlayer.Name and v.Character and v.Character.BodyEffects["K.O"].Value == true and v.Character.BodyEffects["Dead"].Value == false then
+                wait(0.5)
                 game:service"Players".LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Character.UpperTorso.Position.X,v.Character.UpperTorso.Position.Y+1.3,v.Character.UpperTorso.Position.Z)
                 game:service"ReplicatedStorage".MainEvent:FireServer("Stomp")
             end
@@ -86,8 +82,8 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
 
     local firstWanted = player.leaderstats.Wanted.Value
     task.spawn(function()
-        while true do wait(1)
-            local cal = math.floor((player.leaderstats.Wanted.Value - firstWanted) * 60)
+        while true do wait(15)
+            local cal = math.floor((player.leaderstats.Wanted.Value - firstWanted) * 4)
             firstWanted = player.leaderstats.Wanted.Value
             txt:Update("rate: "..tostring(minifyNum(cal)).." / min")
         end
