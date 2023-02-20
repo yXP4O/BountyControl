@@ -172,7 +172,7 @@ elseif table.find(getgenv().Seperators["killers"], player.UserId) then
         while true do
             wait(0.35)
             pcall(function()
-                if not player.Backpack:FindFirstChild("[Bat]") and player.Character:FindFirstChild("[Bat]") then
+                if not player.Backpack:FindFirstChild("[Bat]") and not player.Character:FindFirstChild("[Bat]") then
                     repeat
                         player.Character.HumanoidRootPart.CFrame = bat.Head.CFrame
                         fireclickdetector(bat:FindFirstChildWhichIsA("ClickDetector"))
