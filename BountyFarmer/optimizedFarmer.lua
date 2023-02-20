@@ -53,8 +53,8 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
             pcall(function()
                 for i,v in pairs(game:service"Players":GetChildren()) do
                     if v.Name ~= game:service"Players".LocalPlayer.Name and v.Character and v.Character.BodyEffects["K.O"].Value == true and v.Character.BodyEffects["Dead"].Value == false then
-                        wait(0.5)
                         game:service"Players".LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Character.UpperTorso.Position.X,v.Character.UpperTorso.Position.Y+1.3,v.Character.UpperTorso.Position.Z)
+                        wait(0.5)
                         game:service"ReplicatedStorage".MainEvent:FireServer("Stomp")
                     end
                 end
