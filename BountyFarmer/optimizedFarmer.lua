@@ -53,6 +53,7 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
         end
     end)
 
+    --[[
     task.spawn(function()
         while true do
             wait(0.0001)
@@ -65,6 +66,17 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
                 end
             end)
         end
+    end)
+    ]]
+
+    game:service"RunService".RenderStepped:Connect(function()
+        pcall(function()
+            for i,v in pairs(game:service"Players":GetChildren()) do
+                if v.Name ~= game:service"Players".LocalPlayer.Name and v.Character and v.Character.BodyEffects["K.O"].Value == true and v.Character.BodyEffects["Dead"].Value == false then
+                    game:service"Players".LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Character.UpperTorso.Position.X,v.Character.UpperTorso.Position.Y+1.3,v.Character.UpperTorso.Position.Z)
+                end
+            end
+        end)
     end)
 
     local function minifyNum(num)
@@ -108,24 +120,18 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
         for i,v in pairs(game:GetDescendants()) do
             if v:IsA("Part") then
                 v.Material = Enum.Material.SmoothPlastic
-                v.Transparency = 1
             elseif v:IsA("Decal") then
                 v:Destroy()
             elseif v:IsA("Texture") then
                 v:Destroy()
             elseif v:IsA("MeshPart") then
                 v.TextureID = 0
-                v.Transparency = 1
             elseif v.Name == "Terrian" then
                 v.WaterReflectace = 1
                 v.WaterTransparency = 1
             elseif v:IsA("SpotLight") then
                 v.Range = 0
                 v.Enabled = false
-            elseif v:IsA("WedgePart") then
-                v.Transparency = 1
-            elseif v:IsA("UnionOperation") then
-                v.Transparency = 1
             end
         end
     end)
@@ -190,8 +196,9 @@ elseif table.find(getgenv().Seperators["killers"], player.UserId) then
                 if player.Backpack:FindFirstChild("[Bat]") then
                     player.Backpack:FindFirstChild("[Bat]").Parent = player.Character
                 end
-                    
+                
                 player.Character.HumanoidRootPart.CFrame = CFrame.new(207, 38.25, 200014)
+                player.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(30), 0)
                 player.Character:FindFirstChild("[Bat]"):Activate()
             end)
         end
