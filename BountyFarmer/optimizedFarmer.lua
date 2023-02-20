@@ -234,6 +234,18 @@ else
     local orentation = Vector3.new(-90,0,0)
 
     task.spawn(function()
+        while true do wait(0.2)
+            pcall(function()
+                for i,v in pairs(workspace.Players:GetChildren()) do
+                    if v.Name ~= player.Name then
+                        v:Destry()
+                    end
+                end
+            end)
+        end
+    end)
+
+    task.spawn(function()
         while true do
             wait(0.33)
             pcall(function()
