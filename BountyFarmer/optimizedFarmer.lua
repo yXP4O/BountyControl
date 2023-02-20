@@ -1,8 +1,3 @@
-getgenv().Seperators = {
-    stompers = {},
-    killers = {}
-}
-
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
@@ -91,11 +86,13 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
     end
 
     local firstWanted = player.leaderstats.Wanted.Value
+    local initalStart = player.leaderstats.Wanted.Value
     task.spawn(function()
         while true do wait(15)
             local cal = math.floor((player.leaderstats.Wanted.Value - firstWanted) * 4)
             firstWanted = player.leaderstats.Wanted.Value
             txt:Update("rate: "..tostring(minifyNum(cal)).." / min")
+            earned:Update("earned: "..tostring(minifyNum(player.leaderstats.Wanted.Value - initalStart)))
         end
     end)
 
