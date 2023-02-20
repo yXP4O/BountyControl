@@ -62,12 +62,29 @@ elseif isStomper then
     -- security
     local hasSentReport = false
     local firstWanted = player.leaderstats.Wanted.Value
+    local startWanted = player.leaderstats.Wanted.Value
     local stompingEnable = true
     local secureEnable = false
     local flagged = {}
     local firstTick = tick() + getgenv().MajorSettings["configs"]["autoServerHopTime"]
+    task.spawn(function() -- calculates rate
+        local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/theracisthub/libs/main/ocinhot"))()
+        local main = lib:Create("AutoStomper")
+        main:NewToggle("Enable Autostomp","eat",true,function(bool)
+            stompingEnable = bool
+        end)
+        local rater = main:NewLabel("Rate: ?")
+        while true do
+            wait(15)
+            pcall(function()
+                local newAmt = math.floor((player.leaderstats.Wanted.Value - startWanted) * 4)
+                startWanted = player.leaderstats.Wanted.Value
+                rater:Update("Rate: "..tostring(functions.formatNum(newAmt)).." / minute")
+            end)
+        end
+    end)
     task.spawn(function()
-        functions.gfx(getgenv().MajorSettings["fps"], false)
+        functions.gfx(60, false)
         while true do
             wait(0.01)
             print(math.floor(firstTick - tick()), secureEnable, stompingEnable)
