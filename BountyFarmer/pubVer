@@ -131,7 +131,7 @@ elseif isStomper then
         if stompingEnable then
             local target = grabTarget()
             if target then
-                targetStomp:Update("Stomping",v.Name)
+                targetStomp:Update("Stomping",target.Name)
                 player.Character.HumanoidRootPart.CFrame = CFrame.new(target.Character.UpperTorso.Position) * CFrame.new(0,1.1,0)
                 game:service"ReplicatedStorage".MainEvent:FireServer("Stomp")
             else
