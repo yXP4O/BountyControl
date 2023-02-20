@@ -4,6 +4,8 @@ if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
+if game.PlaceId ~= 2788229376 then return end
+
 repeat wait(0.01) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
 
 local player = game:service"Players".LocalPlayer
@@ -12,6 +14,12 @@ local isStomper = player.UserId == getgenv().MajorSettings["stomper"]
 local isBot = table.find(getgenv().MajorSettings["alts"], player.UserId) 
 
 local functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/yXP4O/BountyControl/main/Others/publicVerModule.lua"))()
+
+game:service"Players".LocalPlayer.Idled:connect(function()
+	game:service"VirtualUser":Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+	wait(1)
+	game:service"VirtualUser":Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
 
 local remotes = {
     "CHECKER_1",
