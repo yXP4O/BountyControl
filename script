@@ -1,10 +1,12 @@
+-- // made by arrayed.. 
+
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
 repeat wait(0.001) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
 
-local testMode = false
+local testMode = true
 if testMode then
     local newIDS = {}
     for i,v in pairs(game:service"Players":GetChildren()) do
@@ -126,7 +128,7 @@ player.CharacterAdded:Connect(function()
 end)
 
 functions.blockScreen()
-functions.lowGFX(BountyControl['fps'])
+functions.lowGFX(BountyControl['fps'], player.UserId == BountyControl["host"])
 
 task.spawn(function()
     functions.tpHome()
@@ -435,6 +437,21 @@ if isHost then
 
     UICorner_6:Clone().Parent = cancelTpButton
 
+    local sepectateButton = Instance.new("TextButton")
+
+    sepectateButton.Name = "sepectateButton"
+    sepectateButton.Parent = functionsCard
+    sepectateButton.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+    sepectateButton.BorderColor3 = Color3.fromRGB(26, 26, 26)
+    sepectateButton.Size = UDim2.new(0, 184, 0, 16)
+    sepectateButton.Font = Enum.Font.SourceSans
+    sepectateButton.Text = "  spectate"
+    sepectateButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    sepectateButton.TextSize = 14.000
+    sepectateButton.TextXAlignment = Enum.TextXAlignment.Left
+
+    UICorner_6:Clone().Parent = sepectateButton
+
     kickButton.Name = "kickButton"
     kickButton.Parent = functionsCard
     kickButton.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
@@ -556,6 +573,35 @@ if isHost then
     end
 
     local newBuyerName = ""
+    local fpsFunc = setfpscap or set_fps_cap
+
+    sepectateButton.MouseButton1Click:Connect(function()
+        if sepectateButton.Text == "  spectate" then
+            sepectateButton.Text = "  unspectate"
+            game:service"RunService":Set3dRenderingEnabled(true)
+
+            pcall(function() fpsFunc(30) end)
+
+            local initalTarget = game:service"Players":FindFirstChild(newBuyerName)
+            if game:service"CoreGui":FindFirstChild("Holder") then
+                game:service"CoreGui":FindFirstChild("Holder"):FindFirstChildWhichIsA("Frame").Visible = false
+            end
+
+            repeat
+                workspace.CurrentCamera.CameraSubject = initalTarget.Character:FindFirstChild("HumanoidRootPart")
+                wait()
+            until sepectateButton.Text == "  spectate" or not initalTarget.Character:FindFirstChild("HumanoidRootPart")
+            game:service"RunService":Set3dRenderingEnabled(false)
+            workspace.CurrentCamera.CameraSubject = player.Character.HumanoidRootPart
+            if game:service"CoreGui":FindFirstChild("Holder") then
+                game:service"CoreGui":FindFirstChild("Holder"):FindFirstChildWhichIsA("Frame").Visible = true
+            end
+        
+            pcall(function() fpsFunc(BountyControl["fps"]) end)
+        else
+            sepectateButton.Text = "  spectate"
+        end
+    end)
 
     bountyKill.MouseButton1Click:Connect(function()
         bountyKilling = not bountyKilling
