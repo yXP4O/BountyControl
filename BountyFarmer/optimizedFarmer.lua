@@ -88,8 +88,8 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
     task.spawn(function()
         while true do wait(1)
             local cal = math.floor((player.leaderstats.Wanted.Value - firstWanted) * 60)
-            firstWanted = player.leaderstats.Value
-            txt:Update("Rate: "..tostring(minifyNum(cal)).." / min")
+            firstWanted = player.leaderstats.Wanted.Value
+            txt:Update("rate: "..tostring(minifyNum(cal)).." / min")
         end
     end)
 
@@ -97,7 +97,6 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
         settings().Physics.PhysicsEnvironmentalThrottle = 1
         settings().Rendering.QualityLevel = 'Level01'
         UserSettings():GetService("UserGameSettings").MasterVolume = 0
-        game:service"RunService":Set3dRenderingEnabled(false)
         for i,v in pairs(game:GetDescendants()) do
             if v:IsA("Part") then
                 v.Material = Enum.Material.SmoothPlastic
