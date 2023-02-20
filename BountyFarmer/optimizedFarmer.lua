@@ -238,7 +238,7 @@ else
             pcall(function()
                 for i,v in pairs(workspace.Players:GetChildren()) do
                     if v.Name ~= player.Name then
-                        v:Destry()
+                        v:Destroy()
                     end
                 end
             end)
