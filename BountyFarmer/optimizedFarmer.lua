@@ -74,6 +74,7 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
             for i,v in pairs(game:service"Players":GetChildren()) do
                 if v.Name ~= game:service"Players".LocalPlayer.Name and v.Character and v.Character.BodyEffects["K.O"].Value == true and v.Character.BodyEffects["Dead"].Value == false then
                     game:service"Players".LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Character.UpperTorso.Position.X,v.Character.UpperTorso.Position.Y+1.3,v.Character.UpperTorso.Position.Z)
+                    task.wait(getgenv().Seperators["delay"])
                 end
             end
         end)
