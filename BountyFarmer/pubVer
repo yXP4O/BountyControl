@@ -84,7 +84,7 @@ elseif isStomper then
                                 embeds = {
                                     {
                                         title = "bounty farmer report",
-                                        description = "**Hopped: Yes**\n**Bounty gain:** "..tostring(functions.formatNum(math.floor(player.leaderstats.Wanted.Value - firstWanted)))
+                                        description = "**Hopped: Yes**\n**Bounty gain:** "..tostring(functions.formatNum(math.floor(player.leaderstats.Wanted.Value - firstWanted))),
                                         type = "rich",
                                         color = tonumber(0x09CF6A),
                                         timestamp = DateTime.now():ToIsoDate()
