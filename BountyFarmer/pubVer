@@ -13,6 +13,25 @@ local isBot = table.find(getgenv().MajorSettings["alts"], player.UserId)
 
 local functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/yXP4O/BountyControl/main/Others/publicVerModule.lua"))()
 
+local remotes = {
+    "CHECKER_1",
+    "CHECKER_2",
+    "TeleportDetect",
+    "OneMoreTime",
+    "BreathingHAMON",
+    "VirusCough"
+}
+
+local __namecall
+__namecall = hookmetamethod(game, "__namecall", function(...)
+    local args = {...}
+    local method = getnamecallmethod()
+    if (method == "FireServer" and args[1].Name == "MainEvent" and table.find(remotes, args[2])) then
+        return
+    end
+    return __namecall(table.unpack(args))
+end)
+
 game:service"ReplicatedStorage".DefaultChatSystemChatEvents.OnMessageDoneFiltering.OnClientEvent:Connect(function(messageData) 
     local user = game:service"Players":GetPlayerByUserId(game.Players:GetUserIdFromNameAsync(messageData.FromSpeaker))
     local msg = messageData.Message
