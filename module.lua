@@ -57,7 +57,7 @@ functions.resetChar = function() -- force resets your character
     end
 end
 
-functions.lowGFX = function(fps) -- low gfx / fps booster
+functions.lowGFX = function(fps, host) -- low gfx / fps booster
     host = host or false
     local fps_capper = setfpscap or set_fps_cap
 
