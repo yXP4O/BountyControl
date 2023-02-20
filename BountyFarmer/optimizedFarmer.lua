@@ -40,9 +40,6 @@ Part.CFrame = CFrame.new(1000,10000,1000)
 Part.Anchored = true
 
 if table.find(getgenv().Seperators["stompers"], player.UserId) then
-    local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/theracisthub/libs/main/ocinhot"))()
-    local main = lib:Create("AutoStomper")
-
     game:service"Players".LocalPlayer.leaderstats.Wanted.Changed:Connect(function()
         if game:service"Players".LocalPlayer.leaderstats.Wanted.Value >= 2000000 then
             game:service"Players".LocalPlayer:Kick("overuled")
