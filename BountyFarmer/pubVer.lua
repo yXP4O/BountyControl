@@ -112,39 +112,18 @@ elseif isStomper then
         end
     end)
 
-    local function grabTarget()
-        for i,v in pairs(game:service"Players":GetChildren()) do
-            if v.Name ~= player.Name and table.find(getgenv().MajorSettings["alts"], v.UserId) then
-                if v.Character and v.Character:FindFirstChildWhichIsA("Humanoid") then
-                    if v.Character:FindFirstChild("BodyEffects") then
-                        if v.Character:FindFirstChild("BodyEffects"):FindFirstChild("K.O").Value == true then
-                            return v
-                        elseif v.Character:FindFirstChild("BodyEffects"):FindFirstChild("Dead").Value == true then
-                            pcall(function() workspace.Players:FindFirstChild(v.Name):Destroy() end)
-                        end
-                    end
-                end
-            end
-        end
-        return nil
-    end
-
     game:service"RunService".Stepped:Connect(function()
         if stompingEnable then
             pcall(function()
                 for i,v in pairs(game:service"Players":GetChildren()) do
-                    if v.Name ~= player.Name and table.find(getgenv().MajorSettings["alts"], v.UserId) and v.Character and v.Character:FindFirstChildWhichIsA("Humanoid") and v.Character:FindFirstChild("BodyEffects") then
-                        if v.Character:FindFirstChild("BodyEffects"):FindFirstChild("K.O").Value == true then
-                            --targetStomp:Update("Stomping",v.Name)
-                            player.Character.HumanoidRootPart.CFrame = CFrame.new(v.Character.UpperTorso.Position) * CFrame.new(0,1.1,0)
-                            game:service"ReplicatedStorage".MainEvent:FireServer("Stomp")
-                        end
+                    if v.Character:FindFirstChild("BodyEffects"):FindFirstChild("K.O").Value == true and v.Character:FindFirstChild("BodyEffects"):FindFirstChild("Dead").Value == false and v.Name ~= player.Name and table.find(getgenv().MajorSettings["alts"], v.UserId) then
+                        player.Character.HumanoidRootPart.CFrame = CFrame.new(v.Character.UpperTorso.Position) + Vector3.new(0,1.9,0)
+                        game:service"ReplicatedStorage".MainEvent:FireServer("Stomp")
                     end
                 end
             end)
         end
     end)
-
     task.spawn(function()
         functions.gfx(60, false)
         while true do
