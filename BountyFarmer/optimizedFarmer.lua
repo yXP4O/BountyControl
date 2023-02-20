@@ -48,6 +48,12 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
     local functionName = "runner3000"
 
     task.spawn(function()
+        while true do wait(0.0001)
+            pcall(function() game:service"ReplicatedStorage".MainEvent:FireServer("Stomp") end)
+        end
+    end)
+
+    task.spawn(function()
         while true do
             wait(0.0001)
             pcall(function()
@@ -55,7 +61,6 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
                     if v.Name ~= game:service"Players".LocalPlayer.Name and v.Character and v.Character.BodyEffects["K.O"].Value == true and v.Character.BodyEffects["Dead"].Value == false then
                         game:service"Players".LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Character.UpperTorso.Position.X,v.Character.UpperTorso.Position.Y+1.3,v.Character.UpperTorso.Position.Z)
                         wait(0.5)
-                        game:service"ReplicatedStorage".MainEvent:FireServer("Stomp")
                     end
                 end
             end)
