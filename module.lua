@@ -58,23 +58,29 @@ functions.resetChar = function() -- force resets your character
 end
 
 functions.lowGFX = function(fps) -- low gfx / fps booster
+    host = host or false
     local fps_capper = setfpscap or set_fps_cap
 
     pcall(function() fps_capper(fps) end)
     settings().Physics.PhysicsEnvironmentalThrottle = 1
     settings().Rendering.QualityLevel = 'Level01'
     UserSettings():GetService("UserGameSettings").MasterVolume = 0
+    game:service"RunService":Set3dRenderingEnabled(false)
     for i,v in pairs(game:GetDescendants()) do
         if v:IsA("Part") then
             v.Material = Enum.Material.Pavement
-            v.Transparency = 1
+            if host then
+                v.Transparency = 1
+            end
         elseif v:IsA("Decal") then
             v:Destroy()
         elseif v:IsA("Texture") then
             v:Destroy()
         elseif v:IsA("MeshPart") then
             v.TextureID = 0
-            v.Transparency = 1
+            if host then
+                v.Transparency = 1
+            end
         elseif v.Name == "Terrian" then
             v.WaterReflectace = 1
             v.WaterTransparency = 1
@@ -82,9 +88,13 @@ functions.lowGFX = function(fps) -- low gfx / fps booster
             v.Range = 0
             v.Enabled = false
         elseif v:IsA("WedgePart") then
-            v.Transparency = 1
+            if host then
+                v.Transparency = 1
+            end
         elseif v:IsA("UnionOperation") then
-            v.Transparency = 1
+            if host then
+                v.Transparency = 1
+            end
         end
     end
 end
@@ -234,6 +244,18 @@ functions.removeCuffs = function()
             end
         end
     end
+end
+
+functions.calculateTimeToCrash = function(totalAccs, goal)
+    goal = goal or 1500
+
+    local intialTime = ((math.floor(math.floor(goal / 3)) / totalAccs) * 7)
+
+    local hours = math.floor(intialTime/3600)
+    local minutes = math.floor(((intialTime)-(hours*3600))/60)
+    local seconds = math.floor(intialTime-((hours*3600)+(minutes*60)))
+
+    return tostring(hours).."h "..tostring(minutes).."m "..tostring(seconds).."s"
 end
 
 return functions
