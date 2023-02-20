@@ -68,7 +68,7 @@ functions.lowGFX = function(fps, host) -- low gfx / fps booster
     game:service"RunService":Set3dRenderingEnabled(false)
     for i,v in pairs(game:GetDescendants()) do
         if v:IsA("Part") then
-            v.Material = Enum.Material.Pavement
+            v.Material = Enum.Material.SmoothPlastic
             if not host then
                 v.Transparency = 1
             end
