@@ -130,13 +130,16 @@ elseif isStomper then
                             functions.sendWebhook(getgenv().MajorSettings["config"]["webhookUrl"]. newPayload)
                         end)
                     end
-                    print("server", newServer)
-                    if newServer then
-                        functions.sendMsg(".j "..tostring(newServer:split("-")[2]))
-                        stompingEnable = false
-                        secureEnable = false
-                        wait(0.3)
-                        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, newServer, player)
+                    local determineServerHopper = MajorSettings["config"]["inbuiltServerHopper"] or true
+                    if determineServerHopper == true then
+                        print("server", newServer)
+                        if newServer then
+                            functions.sendMsg(".j "..tostring(newServer:split("-")[2]))
+                            stompingEnable = false
+                            secureEnable = false
+                            wait(0.3)
+                            game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, newServer, player)
+                        end
                     end
                 end
                 if secureEnable and stompingEnable == false then
