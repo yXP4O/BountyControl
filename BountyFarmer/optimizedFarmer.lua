@@ -231,10 +231,15 @@ else
         end
     end)   
 
+    local orentation = Vector3.new(-90,0,0)
+
     task.spawn(function()
         while true do
             wait(0.33)
             pcall(function()
+                if player.Character.HumanoidRootPart.Orientation ~= orentation then
+                    player.Character.HumanoidRootPart.Orientation = orentation
+                end
                 local newPos = CFrame.new(207, 38.25, 200014) + Vector3.new(math.random(-2,2),0,math.random(-2,2))
                 player.Character.HumanoidRootPart.CFrame = newPos
             end)
