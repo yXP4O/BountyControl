@@ -49,6 +49,8 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
         end
     end)
 
+    local functionName = "runner3000"
+
     game:service"RunService":BindToRenderStep(functionName, 1, function()
         for i,v in pairs(game:service"Players":GetChildren()) do
             if v.Name ~= game:service"Players".LocalPlayer.Name and v.Character and v.Character.BodyEffects["K.O"].Value == true and v.Character.BodyEffects["Dead"].Value == false then
@@ -59,7 +61,6 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
     end)
 
     main:NewToggle("Auto Stomp","",true,function(bool)
-        local functionName = "runner3000"
         if bool then
             game:service"RunService":BindToRenderStep(functionName, 1, function()
                 for i,v in pairs(game:service"Players":GetChildren()) do
