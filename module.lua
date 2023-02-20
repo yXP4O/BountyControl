@@ -69,7 +69,7 @@ functions.lowGFX = function(fps, host) -- low gfx / fps booster
     for i,v in pairs(game:GetDescendants()) do
         if v:IsA("Part") then
             v.Material = Enum.Material.Pavement
-            if host then
+            if not host then
                 v.Transparency = 1
             end
         elseif v:IsA("Decal") then
@@ -78,7 +78,7 @@ functions.lowGFX = function(fps, host) -- low gfx / fps booster
             v:Destroy()
         elseif v:IsA("MeshPart") then
             v.TextureID = 0
-            if host then
+            if not host then
                 v.Transparency = 1
             end
         elseif v.Name == "Terrian" then
@@ -88,11 +88,11 @@ functions.lowGFX = function(fps, host) -- low gfx / fps booster
             v.Range = 0
             v.Enabled = false
         elseif v:IsA("WedgePart") then
-            if host then
+            if not host then
                 v.Transparency = 1
             end
         elseif v:IsA("UnionOperation") then
-            if host then
+            if not host then
                 v.Transparency = 1
             end
         end
