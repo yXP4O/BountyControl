@@ -183,7 +183,7 @@ elseif table.find(getgenv().Seperators["killers"], player.UserId) then
                     player.Backpack:FindFirstChild("[Bat]").Parent = player.Character
                 end
                     
-                player.Character.HumanoidRootPart.CFrame = Part.CFrame + Vector3.new(0,1,0)
+                player.Character.HumanoidRootPart.CFrame = Part.CFrame + Vector3.new(0,3.4,0)
                 player.Character:FindFirstChild("[Bat]"):Activate()
             end)
         end
@@ -227,7 +227,7 @@ else
         while true do
             wait(0.33)
             pcall(function()
-                local newPos = Part.CFrame + Vector3.new(math.random(-2,2),0.9,math.random(-2,2))
+                local newPos = Part.CFrame + Vector3.new(math.random(-2,2),3.4,math.random(-2,2))
                 player.Character.HumanoidRootPart.CFrame = newPos
             end)
         end
