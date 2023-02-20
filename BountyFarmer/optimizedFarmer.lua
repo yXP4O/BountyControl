@@ -89,7 +89,7 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
         while true do wait(1)
             local cal = math.floor((player.leaderstats.Wanted.Value - firstWanted) * 60)
             firstWanted = player.leaderstats.Value
-            txt:Update("Rate: "..tostring(minifyNum(cal)))
+            txt:Update("Rate: "..tostring(minifyNum(cal)).." / min")
         end
     end)
 
