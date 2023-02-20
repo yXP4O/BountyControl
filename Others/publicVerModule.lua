@@ -71,7 +71,7 @@ functions.gfx = function(fpsAmt, gfxMode)
     end
     for i,v in pairs(game:GetDescendants()) do
         if v:IsA("Part") then
-            v.Material = Enum.Material.Pavement
+            v.Material = Enum.Material.SmoothPlastic
             if gfxMode == true then
                 v.Transparency = 1
             end
