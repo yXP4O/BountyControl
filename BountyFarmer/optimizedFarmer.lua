@@ -40,6 +40,10 @@ Part.CFrame = CFrame.new(1000,10000,1000)
 Part.Anchored = true
 
 if table.find(getgenv().Seperators["stompers"], player.UserId) then
+    local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/theracisthub/libs/main/ocinhot"))()
+    local main = lib:Create("AutoStomper")
+    local txt = main:NewLabel("Rate: ???")
+
     game:service"Players".LocalPlayer.leaderstats.Wanted.Changed:Connect(function()
         if game:service"Players".LocalPlayer.leaderstats.Wanted.Value >= 2000000 then
             game:service"Players".LocalPlayer:Kick("overuled")
@@ -57,18 +61,35 @@ if table.find(getgenv().Seperators["stompers"], player.UserId) then
         end
     end)
 
-    main:NewToggle("Auto Stomp","",true,function(bool)
-        if bool then
-            game:service"RunService":BindToRenderStep(functionName, 1, function()
-                for i,v in pairs(game:service"Players":GetChildren()) do
-                    if v.Name ~= game:service"Players".LocalPlayer.Name and v.Character and v.Character.BodyEffects["K.O"].Value == true and v.Character.BodyEffects["Dead"].Value == false then
-                        game:service"Players".LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Character.UpperTorso.Position.X,v.Character.UpperTorso.Position.Y+1.3,v.Character.UpperTorso.Position.Z)
-                        game:service"ReplicatedStorage".MainEvent:FireServer("Stomp")
-                    end
-                end
-            end)
-        else
-            game:service"RunService":UnbindFromRenderStep(functionName)
+    local function minifyNum(num)
+        num = tostring(num)
+        if num:len() <= 3 then
+            return num
+        elseif num:len() == 4 then
+            return num:sub(1,1).."."..num:sub(2,2).."K"
+        elseif num:len() == 5 then
+            return num:sub(1,2).."."..num:sub(3,4).."K"
+        elseif num:len() == 6 then
+            return num:sub(1,3).."."..num:sub(4,5).."K"
+        elseif num:len() == 7 then
+            return num:sub(1,1).."."..num:sub(2,3).."M"
+        elseif num:len() == 8 then
+            return num:sub(1,2).."."..num:sub(3,4).."M"
+        elseif num:len() == 9 then
+            return num:sub(1,3).."."..num:sub(4,5).."M"
+        elseif num:len() == 10 then
+            return num:sub(1,1).."."..num:sub(2,3).."B"
+        end
+    
+        return 'error'
+    end
+
+    local firstWanted = player.leaderstats.Wanted.Value
+    task.spawn(function()
+        while true do wait(1)
+            local cal = math.floor((player.leaderstats.Wanted.Value - firstWanted) * 60)
+            firstWanted = player.leaderstats.Value
+            txt:Update("Rate: "..tostring(minifyNum(cal)))
         end
     end)
 
