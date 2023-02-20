@@ -100,7 +100,7 @@ elseif isStomper then
         main:NewToggle("Enable Autostomp","eat",true,function(bool)
             stompingEnable = bool
         end)
-        local targetStomp = main:NewLabel("Stomping: ????")
+        local targetStomp = main:NewLabel("Stomping: not working.")
         local rater = main:NewLabel("Rate: ?")
         while true do
             wait(15)
@@ -135,7 +135,7 @@ elseif isStomper then
                 for i,v in pairs(game:service"Players":GetChildren()) do
                     if v.Name ~= player.Name and table.find(getgenv().MajorSettings["alts"], v.UserId) and v.Character and v.Character:FindFirstChildWhichIsA("Humanoid") and v.Character:FindFirstChild("BodyEffects") then
                         if v.Character:FindFirstChild("BodyEffects"):FindFirstChild("K.O").Value == true then
-                            targetStomp:Update("Stomping",v.Name)
+                            --targetStomp:Update("Stomping",v.Name)
                             player.Character.HumanoidRootPart.CFrame = CFrame.new(v.Character.UpperTorso.Position) * CFrame.new(0,1.1,0)
                             game:service"ReplicatedStorage".MainEvent:FireServer("Stomp")
                         end
