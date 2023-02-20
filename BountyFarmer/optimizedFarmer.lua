@@ -197,7 +197,7 @@ elseif table.find(getgenv().Seperators["killers"], player.UserId) then
                     player.Backpack:FindFirstChild("[Bat]").Parent = player.Character
                 end
                 
-                player.Character.HumanoidRootPart.CFrame = CFrame.new(207, 38.25, 200014)
+                player.Character.HumanoidRootPart.CFrame = CFrame.new(68, 139, -690)-- CFrame.new(207, 38.25, 200014)
                 player.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(30), 0)
                 player.Character:FindFirstChild("[Bat]"):Activate()
             end)
@@ -259,7 +259,7 @@ else
                 if player.Character.HumanoidRootPart.Orientation ~= orentation then
                     player.Character.HumanoidRootPart.Orientation = orentation
                 end
-                local newPos = CFrame.new(207, 38.25, 200014) + Vector3.new(math.random(-2,2),0,math.random(-2,2))
+                local newPos = CFrame.new(68, 139, -690) + Vector3.new(math.random(-2,2),0,math.random(-2,2))--CFrame.new(207, 38.25, 200014) + Vector3.new(math.random(-2,2),0,math.random(-2,2))
                 player.Character.HumanoidRootPart.CFrame = newPos
             end)
         end
