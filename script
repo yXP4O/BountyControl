@@ -6,7 +6,7 @@ end
 
 repeat wait(0.001) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
 
-local testMode = true
+local testMode = false
 if testMode then
     local newIDS = {}
     for i,v in pairs(game:service"Players":GetChildren()) do
@@ -691,7 +691,7 @@ if isHost then
     crashMode.MouseButton1Click:Connect(function()
         crashModeEnabled = not crashModeEnabled
         if crashModeEnabled then
-            alert("crash mode enabled")
+            alert("crash mode enabled : select alts on the left to crash", 15)
             crashMode.Text = "  crash mode | on"
             crashStart.Visible = true
             removeAllSelects()
