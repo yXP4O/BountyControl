@@ -6,7 +6,7 @@ end
 
 repeat wait(0.001) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
 
-local testMode = false
+local testMode = true
 if testMode then
     local newIDS = {}
     for i,v in pairs(game:service"Players":GetChildren()) do
@@ -548,6 +548,15 @@ if isHost then
             pcall(function() MalertLabel:Destroy() end)
         end)
     end
+
+    workspace.Players.ChildAdded:Connect(function(child)
+        repeat wait(0.01) until child.Parent ~= nil
+        alert("player "..tostring(child.Name).." has joined.", 15)
+    end)    
+    
+    workspace.Players.ChildRemoving:Connect(function(child)
+        alert("player "..tostring(child.Name).." has left.", 15)
+    end)
 
     local function getAllSelectedChildren()
         local c = {}
