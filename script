@@ -6,7 +6,7 @@ end
 
 repeat wait(0.001) until workspace.Players:FindFirstChild(game:service"Players".LocalPlayer.Name)
 
-local testMode = true
+local testMode = false
 if testMode then
     local newIDS = {}
     for i,v in pairs(game:service"Players":GetChildren()) do
@@ -218,7 +218,7 @@ if isHost then
     Title.BackgroundTransparency = 1.000
     Title.Size = UDim2.new(0, 201, 0, 15)
     Title.Font = Enum.Font.SourceSans
-    Title.Text = " running build 1.0"
+    Title.Text = " running build 1.1c"
     Title.TextColor3 = Color3.fromRGB(255, 255, 255)
     Title.TextSize = 16.000
     Title.TextXAlignment = Enum.TextXAlignment.Left
@@ -554,7 +554,7 @@ if isHost then
         alert("player "..tostring(child.Name).." has joined.", 15)
     end)    
     
-    workspace.Players.ChildRemoving:Connect(function(child)
+    workspace.Players.ChildRemoved:Connect(function(child)
         alert("player "..tostring(child.Name).." has left.", 15)
     end)
 
@@ -787,6 +787,7 @@ if isHost then
     end)
 
     local cacheSelection = {}
+    local timeCache = {}
 
     local function calculateTotalAmount()
         local total = 0
@@ -834,6 +835,7 @@ if isHost then
 
     local function makeCard(alt, placeHolder)
         if not AltsPanel:FindFirstChild("AltCardHolder_"..tostring(alt).."_"..tostring(placeHolder)) then
+            timeCache[tostring(alt)] = math.floor(tonumber(tick()))
             local AltCardHolder = Instance.new("Frame")
             local selectButton = Instance.new("TextButton")
             local UICorner = Instance.new("UICorner")
@@ -872,10 +874,10 @@ if isHost then
     
             local altPlayer = game:service"Players":GetPlayerByUserId(alt)
             local bountyOld = altPlayer.leaderstats.Wanted.Value
-            outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.minifyNum(altPlayer.leaderstats.Wanted.Value)).." W: "..tostring(functions.minifyNum(math.floor(altPlayer.leaderstats.Wanted.Value / 2)))
+            outLabel.Text = tostring(functions.shortenName(altPlayer.Name)).." - B: "..tostring(functions.minifyNum(altPlayer.leaderstats.Wanted.Value)).." W: "..tostring(functions.minifyNum(math.floor(altPlayer.leaderstats.Wanted.Value / 2))).." T: 0m"
 
             altPlayer.leaderstats.Wanted.Changed:Connect(function()
-                outLabel.Text = tostring(altPlayer.Name).." - B: "..tostring(functions.minifyNum(altPlayer.leaderstats.Wanted.Value)).." W: "..tostring(functions.minifyNum(math.floor(altPlayer.leaderstats.Wanted.Value / 2)))
+                outLabel.Text = tostring(functions.shortenName(altPlayer.Name)).." - B: "..tostring(functions.minifyNum(altPlayer.leaderstats.Wanted.Value)).." W: "..tostring(functions.minifyNum(math.floor(altPlayer.leaderstats.Wanted.Value / 2))).." T: 0m"
 
                 if altPlayer.leaderstats.Wanted.Value <= 0 then
                     for i,v in pairs(AltsPanel:GetChildren()) do
@@ -903,6 +905,22 @@ if isHost then
             end)
         end
     end
+
+    task.spawn(function() -- this tasks runs the timer ;)
+        while true do wait(1)
+            for i,v in pairs(timeCache) do
+                local intialTime = math.floor(tonumber(math.floor(tick()) - v) / 60)
+                local playerID = i
+                
+                for n,m in pairs(AltsPanel:GetChildren()) do
+                    if m.Name:find(tostring(playerID)) then
+                        local altPlayer = game:service"Players":GetPlayerByUserId(tonumber(playerID))
+                        m:FindFirstChildWhichIsA("TextLabel").Text = tostring(functions.shortenName(altPlayer.Name)).." - B: "..tostring(functions.minifyNum(altPlayer.leaderstats.Wanted.Value)).." W: "..tostring(functions.minifyNum(math.floor(altPlayer.leaderstats.Wanted.Value / 2))).." T: "..tostring(intialTime).."m"
+                    end
+                end
+            end
+        end
+    end)
 
     for i=1,#getgenv().BountyControl["alts"] do
         local v = getgenv().BountyControl["alts"][i]
@@ -942,17 +960,6 @@ if isHost then
                 end
             end
         end
-
-        --[[
-        for i,v in pairs(AltsPanel:GetChildren()) do
-            if v:IsA("Frame") then
-                v.Visible = false
-            end
-        end
-
-        for i,v in pairs(AltsPanel:GetChildren()) do
-        end
-        ]]
     end
 
     game:service"Players".PlayerAdded:Connect(function(plr)
