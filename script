@@ -131,6 +131,7 @@ functions.blockScreen()
 functions.lowGFX(BountyControl['fps'], player.UserId == BountyControl["host"])
 
 task.spawn(function()
+    local sayMsgOnce = false
     functions.tpHome()
 
     while true do wait(0.01)
@@ -147,6 +148,15 @@ task.spawn(function()
                 end
             end)
         end
+
+        pcall(function()
+            if whitelistedBuyer ~= "" and (game:service"Players"[whitelistedBuyer].Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude > 10 and not sayMsgOnce and player.Character.BodyEffects:FindFirstChild("K.O").Value == false then
+                sayMsgOnce = true
+                functions.say("Knock and arrest me.")
+            elseif whitelistedBuyer ~= "" and (game:service"Players"[whitelistedBuyer].Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude <= 10 and sayMsgOnce == true then
+                sayMsgOnce = false
+            end
+        end)
 
         pcall(function()
             if player.Character:FindFirstChild("BodyEffects"):FindFirstChild("Cuff").Value == true then
