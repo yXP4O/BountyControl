@@ -190,7 +190,7 @@ functions.minifyNum = function(num) -- fancy number converter
     return 'error'
 end
 
-functions.requestPos = function(pose)
+functions.requestPos = function(pose) -- requests circle pos
     local circle = {
         "4.5,0,0","0,0,4.5","-4.5,0,0","0,0,-4.5","3,0,3",
         "-3,0,3","-3,0,-3","3,0,-3","6.5,0,0","5,0,3",
@@ -204,7 +204,7 @@ functions.requestPos = function(pose)
     return circle[pose]
 end
 
-functions.sarchTool = function(baseName)
+functions.sarchTool = function(baseName) -- finds a tool / dum dum dh update
     baseName = tostring(baseName):lower()
     for i,v in pairs(workspace.Ignored.Shop:GetChildren()) do
         if v.Name:lower():sub(1,baseName:len()) == baseName:sub(1,baseName:len()) then
@@ -214,7 +214,7 @@ functions.sarchTool = function(baseName)
     return nil
 end
 
-functions.removeTools = function()
+functions.removeTools = function() -- remove all tools from char
     for i,v in pairs(game:service"Players".LocalPlayer.Character:GetChildren()) do
         if v:IsA("Tool") then
             v.Parent = game:service"Players".LocalPlayer.Backpack
@@ -222,7 +222,7 @@ functions.removeTools = function()
     end
 end
 
-functions.removeCuffs = function()
+functions.removeCuffs = function() -- removes localplayer cuffs
     local player = game:service"Players".LocalPlayer
     local keys = functions.sarchTool("[Key]")
     functions.removeTools()
@@ -246,7 +246,7 @@ functions.removeCuffs = function()
     end
 end
 
-functions.calculateTimeToCrash = function(totalAccs, goal)
+functions.calculateTimeToCrash = function(totalAccs, goal) -- calculates crash
     goal = goal or 1500
 
     local intialTime = ((math.floor(math.floor(goal / 3)) / totalAccs) * 7)
@@ -256,6 +256,15 @@ functions.calculateTimeToCrash = function(totalAccs, goal)
     local seconds = math.floor(intialTime-((hours*3600)+(minutes*60)))
 
     return tostring(hours).."h "..tostring(minutes).."m "..tostring(seconds).."s"
+end
+
+functions.shortenName = function(origin) -- shortens long ahh names
+    origin = tostring(origin)
+    if origin:len() >= 10 then
+        return origin:sub(1, 10).."..."
+    else
+        return origin
+    end
 end
 
 return functions
