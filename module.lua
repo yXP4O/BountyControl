@@ -267,8 +267,8 @@ end
 
 functions.shortenName = function(origin) -- shortens long ahh names
     origin = tostring(origin)
-    if origin:len() >= 10 then
-        return origin:sub(1, 10).."..."
+    if origin:len() > 8 then
+        return origin:sub(1, 8).."..."
     else
         return origin
     end
