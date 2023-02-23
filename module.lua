@@ -169,22 +169,29 @@ end
 
 functions.minifyNum = function(num) -- fancy number converter
     num = tostring(num)
+    local res = nil
     if num:len() <= 3 then
-        return num
+        res = num
     elseif num:len() == 4 then
-        return num:sub(1,1).."."..num:sub(2,2).."K"
+        res = num:sub(1,1).."."..num:sub(2,2).."K"
     elseif num:len() == 5 then
-        return num:sub(1,2).."."..num:sub(3,4).."K"
+        res = num:sub(1,2).."."..num:sub(3,4).."K"
     elseif num:len() == 6 then
-        return num:sub(1,3).."."..num:sub(4,5).."K"
+        res = num:sub(1,3).."."..num:sub(4,5).."K"
     elseif num:len() == 7 then
-        return num:sub(1,1).."."..num:sub(2,3).."M"
+        res = num:sub(1,1).."."..num:sub(2,3).."M"
     elseif num:len() == 8 then
-        return num:sub(1,2).."."..num:sub(3,4).."M"
+        res = num:sub(1,2).."."..num:sub(3,4).."M"
     elseif num:len() == 9 then
-        return num:sub(1,3).."."..num:sub(4,5).."M"
+        res = num:sub(1,3).."."..num:sub(4,5).."M"
     elseif num:len() == 10 then
-        return num:sub(1,1).."."..num:sub(2,3).."B"
+        res = num:sub(1,1).."."..num:sub(2,3).."B"
+    end
+    local new = res:split(".")[2]
+    if tostring(new):sub(1,2) == "00" then
+        return res:split(".")[1]..""..tostring(new:sub(3,3))
+    else
+        return res
     end
 
     return 'error'
